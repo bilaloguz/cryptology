@@ -1,0 +1,4 @@
+"""
+Monoalphabetic substitution ciphers.
+"""
+

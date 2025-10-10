@@ -1,0 +1,4 @@
+"""
+Substitution cipher algorithms.
+"""
+

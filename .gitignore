@@ -1,0 +1,25 @@
+# Python
+python/__pycache__/
+python/*.py[cod]
+python/*$py.class
+python/.pytest_cache/
+python/*.egg-info/
+python/dist/
+python/build/
+
+# C
+c/build/
+c/*.o
+c/*.a
+c/*.so
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
