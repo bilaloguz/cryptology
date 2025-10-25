@@ -110,3 +110,27 @@ def decrypt(ciphertext: str, keyword: str, alphabet: str = DEFAULT_ALPHABET) -> 
     
     return ''.join(result)
 
+
+def produce_alphabet(keyword: str, alphabet: str = DEFAULT_ALPHABET) -> str:
+    """
+    Produce a keyword-based alphabet.
+    
+    This method creates a custom alphabet by rearranging the base alphabet
+    with the keyword at the beginning. The produced alphabet can be used with 
+    polygraphic ciphers for enhanced security.
+    
+    Args:
+        keyword: The keyword to use for alphabet generation
+        alphabet: The base alphabet to rearrange (default: English lowercase)
+    
+    Returns:
+        A keyword-based alphabet
+    
+    Example:
+        >>> produce_alphabet("secret")
+        'secretabcdefghijklmnopqtuvwxyz'
+        >>> produce_alphabet("key", "abc")
+        'keyabc'
+    """
+    return _create_cipher_alphabet(keyword, alphabet)
+

@@ -63,3 +63,25 @@ def decrypt(ciphertext: str, alphabet: str = DEFAULT_ALPHABET) -> str:
     """
     return encrypt(ciphertext, alphabet)
 
+
+def produce_alphabet(alphabet: str = DEFAULT_ALPHABET) -> str:
+    """
+    Produce an Atbash-reversed alphabet.
+    
+    This method creates a custom alphabet by reversing the base alphabet.
+    The produced alphabet can be used with polygraphic ciphers for enhanced security.
+    
+    Args:
+        alphabet: The base alphabet to reverse (default: English lowercase)
+    
+    Returns:
+        An Atbash-reversed alphabet
+    
+    Example:
+        >>> produce_alphabet()
+        'zyxwvutsrqponmlkjihgfedcba'
+        >>> produce_alphabet("abc")
+        'cba'
+    """
+    return alphabet[::-1]
+

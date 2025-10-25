@@ -42,5 +42,21 @@ int affine_encrypt(const char *plaintext, int a, int b, const char *alphabet,
 int affine_decrypt(const char *ciphertext, int a, int b, const char *alphabet,
                    char *result, size_t result_size);
 
+/**
+ * @brief Produce an affine-transformed alphabet
+ * 
+ * This function creates a custom alphabet by applying an affine transformation
+ * to the base alphabet. The produced alphabet can be used with polygraphic 
+ * ciphers for enhanced security.
+ * 
+ * @param a The multiplicative key (must be coprime with alphabet length)
+ * @param b The additive key
+ * @param alphabet The base alphabet to transform
+ * @param result Buffer to store the transformed alphabet
+ * @param result_size Size of the result buffer
+ * @return 0 on success, -1 on error
+ */
+int affine_produce_alphabet(int a, int b, const char *alphabet, char *result, size_t result_size);
+
 #endif /* CRYPTOLOGY_AFFINE_H */
 

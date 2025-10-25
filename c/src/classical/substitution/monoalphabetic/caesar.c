@@ -57,3 +57,25 @@ int caesar_decrypt(const char *ciphertext, int shift, const char *alphabet,
     return caesar_encrypt(ciphertext, -shift, alphabet, result, result_size);
 }
 
+int caesar_produce_alphabet(int shift, const char *alphabet, char *result, size_t result_size) {
+    if (!alphabet || !result || result_size == 0) {
+        return -1;
+    }
+    
+    size_t alphabet_len = strlen(alphabet);
+    if (alphabet_len >= result_size) {
+        return -1;
+    }
+    
+    shift = shift % (int)alphabet_len;
+    if (shift < 0) {
+        shift += (int)alphabet_len;
+    }
+    
+    strcpy(result, alphabet + shift);
+    strncat(result, alphabet, shift);
+    result[result_size - 1] = '\0';
+    
+    return 0;
+}
+

@@ -37,5 +37,20 @@ int keyword_encrypt(const char *plaintext, const char *keyword, const char *alph
 int keyword_decrypt(const char *ciphertext, const char *keyword, const char *alphabet,
                     char *result, size_t result_size);
 
+/**
+ * @brief Produce a keyword-based alphabet
+ * 
+ * This function creates a custom alphabet by rearranging the base alphabet
+ * with the keyword at the beginning. The produced alphabet can be used with 
+ * polygraphic ciphers for enhanced security.
+ * 
+ * @param keyword The keyword to use for alphabet generation
+ * @param alphabet The base alphabet to rearrange
+ * @param result Buffer to store the keyword-based alphabet
+ * @param result_size Size of the result buffer
+ * @return 0 on success, -1 on error
+ */
+int keyword_produce_alphabet(const char *keyword, const char *alphabet, char *result, size_t result_size);
+
 #endif /* CRYPTOLOGY_KEYWORD_H */
 

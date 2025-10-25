@@ -55,3 +55,22 @@ int atbash_decrypt(const char *ciphertext, const char *alphabet,
     return atbash_encrypt(ciphertext, alphabet, result, result_size);
 }
 
+int atbash_produce_alphabet(const char *alphabet, char *result, size_t result_size) {
+    if (!alphabet || !result || result_size == 0) {
+        return -1;
+    }
+    
+    size_t alphabet_len = strlen(alphabet);
+    if (alphabet_len >= result_size) {
+        return -1;
+    }
+    
+    // Reverse the alphabet
+    for (size_t i = 0; i < alphabet_len; i++) {
+        result[i] = alphabet[alphabet_len - 1 - i];
+    }
+    
+    result[alphabet_len] = '\0';
+    return 0;
+}
+

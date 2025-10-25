@@ -122,3 +122,21 @@ int keyword_decrypt(const char *ciphertext, const char *keyword, const char *alp
     return 0;
 }
 
+int keyword_produce_alphabet(const char *keyword, const char *alphabet, char *result, size_t result_size) {
+    if (!keyword || !alphabet || !result || result_size == 0) {
+        return -1;
+    }
+    
+    char cipher_alphabet[MAX_ALPHABET_SIZE];
+    if (create_cipher_alphabet(keyword, alphabet, cipher_alphabet, sizeof(cipher_alphabet)) != 0) {
+        return -1;
+    }
+    
+    if (strlen(cipher_alphabet) >= result_size) {
+        return -1;
+    }
+    
+    strcpy(result, cipher_alphabet);
+    return 0;
+}
+

@@ -140,3 +140,31 @@ int affine_decrypt(const char *ciphertext, int a, int b, const char *alphabet,
     return 0;
 }
 
+int affine_produce_alphabet(int a, int b, const char *alphabet, char *result, size_t result_size) {
+    if (!alphabet || !result || result_size == 0) {
+        return -1;
+    }
+    
+    size_t alphabet_len = strlen(alphabet);
+    if (alphabet_len >= result_size) {
+        return -1;
+    }
+    
+    // Check that a is coprime with alphabet length
+    if (gcd(a, (int)alphabet_len) != 1) {
+        return -1;
+    }
+    
+    // Apply affine transformation to each position
+    for (size_t i = 0; i < alphabet_len; i++) {
+        int transformed_pos = (a * (int)i + b) % (int)alphabet_len;
+        if (transformed_pos < 0) {
+            transformed_pos += (int)alphabet_len;
+        }
+        result[i] = alphabet[transformed_pos];
+    }
+    
+    result[alphabet_len] = '\0';
+    return 0;
+}
+

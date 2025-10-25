@@ -64,3 +64,27 @@ def decrypt(ciphertext: str, shift: int = 3, alphabet: str = DEFAULT_ALPHABET) -
     """
     return encrypt(ciphertext, -shift, alphabet)
 
+
+def produce_alphabet(shift: int = 3, alphabet: str = DEFAULT_ALPHABET) -> str:
+    """
+    Produce a Caesar-shifted alphabet.
+    
+    This method creates a custom alphabet by shifting the base alphabet by the specified amount.
+    The produced alphabet can be used with polygraphic ciphers for enhanced security.
+    
+    Args:
+        shift: The number of positions to shift (default: 3)
+        alphabet: The base alphabet to shift (default: English lowercase)
+    
+    Returns:
+        A Caesar-shifted alphabet
+    
+    Example:
+        >>> produce_alphabet(3)
+        'defghijklmnopqrstuvwxyzabc'
+        >>> produce_alphabet(1, "abc")
+        'bca'
+    """
+    shift = shift % len(alphabet)
+    return alphabet[shift:] + alphabet[:shift]
+

@@ -38,5 +38,19 @@ int caesar_encrypt(const char *plaintext, int shift, const char *alphabet,
 int caesar_decrypt(const char *ciphertext, int shift, const char *alphabet,
                    char *result, size_t result_size);
 
+/**
+ * @brief Produce a Caesar-shifted alphabet
+ * 
+ * This function creates a custom alphabet by shifting the base alphabet by the specified amount.
+ * The produced alphabet can be used with polygraphic ciphers for enhanced security.
+ * 
+ * @param shift The number of positions to shift
+ * @param alphabet The base alphabet to shift
+ * @param result Buffer to store the shifted alphabet
+ * @param result_size Size of the result buffer
+ * @return 0 on success, -1 on error
+ */
+int caesar_produce_alphabet(int shift, const char *alphabet, char *result, size_t result_size);
+
 #endif /* CRYPTOLOGY_CAESAR_H */
 

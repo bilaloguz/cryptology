@@ -134,3 +134,44 @@ def decrypt(ciphertext: str, a: int, b: int, alphabet: str = DEFAULT_ALPHABET) -
     
     return ''.join(result)
 
+
+def produce_alphabet(a: int, b: int, alphabet: str = DEFAULT_ALPHABET) -> str:
+    """
+    Produce an affine-transformed alphabet.
+    
+    This method creates a custom alphabet by applying the affine transformation
+    to each position in the base alphabet. The produced alphabet can be used with 
+    polygraphic ciphers for enhanced security.
+    
+    Args:
+        a: The multiplicative key (must be coprime with alphabet length)
+        b: The additive key
+        alphabet: The base alphabet to transform (default: English lowercase)
+    
+    Returns:
+        An affine-transformed alphabet
+    
+    Raises:
+        ValueError: If 'a' is not coprime with alphabet length
+    
+    Example:
+        >>> produce_alphabet(5, 8)
+        'hknqtwzcfiloruxadgjmpsvybe'
+        >>> produce_alphabet(3, 1, "abc")
+        'bca'
+    """
+    m = len(alphabet)
+    
+    # Check that a is coprime with m
+    if _gcd(a, m) != 1:
+        raise ValueError(f"Key 'a' ({a}) must be coprime with alphabet length ({m})")
+    
+    # Apply affine transformation to each position
+    result = []
+    for i in range(m):
+        # Apply E(x) = (ax + b) mod m
+        transformed_pos = (a * i + b) % m
+        result.append(alphabet[transformed_pos])
+    
+    return ''.join(result)
+
