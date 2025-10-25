@@ -168,8 +168,7 @@ make run-example
 - ✅ Multi-language support (Python & C)
 
 ## License
-
-[Your License Here]
+GPL v3
 
 ## Contributing
 
