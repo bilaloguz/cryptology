@@ -12,6 +12,7 @@ Available ciphers:
 - Chaocipher: Dynamic alphabet permutation cipher
 - Gronsfeld: Numeric key variant of Vigenère cipher
 - Porta: Self-reciprocal polyalphabetic cipher with alphabet pairs
+- Reihenschieber: Mechanical polyalphabetic cipher with shifting strips
 """
 
 from .alberti import encrypt as alberti_encrypt, decrypt as alberti_decrypt
@@ -44,6 +45,13 @@ from .porta import (encrypt as porta_encrypt, decrypt as porta_decrypt,
                    generate_random_key as porta_generate_random_key,
                    generate_key_for_text as porta_generate_key_for_text,
                    encrypt_with_random_key as porta_encrypt_with_random_key)
+from .reihenschieber import (reihenschieber_encrypt, reihenschieber_decrypt,
+                            reihenschieber_generate_random_key,
+                            reihenschieber_generate_key_for_text,
+                            reihenschieber_encrypt_with_random_key,
+                            reihenschieber_produce_custom_shifts,
+                            reihenschieber_encrypt_turkish,
+                            reihenschieber_decrypt_turkish)
 
 __all__ = [
     'alberti_encrypt',
@@ -82,5 +90,13 @@ __all__ = [
     'porta_produce_pairs',
     'porta_generate_random_key',
     'porta_generate_key_for_text',
-    'porta_encrypt_with_random_key'
+    'porta_encrypt_with_random_key',
+    'reihenschieber_encrypt',
+    'reihenschieber_decrypt',
+    'reihenschieber_generate_random_key',
+    'reihenschieber_generate_key_for_text',
+    'reihenschieber_encrypt_with_random_key',
+    'reihenschieber_produce_custom_shifts',
+    'reihenschieber_encrypt_turkish',
+    'reihenschieber_decrypt_turkish'
 ]

@@ -30,7 +30,8 @@ cryptology/
 │               ├── autokey.py
 │               ├── chaocipher.py
 │               ├── gronsfeld.py
-│               └── porta.py
+│               ├── porta.py
+│               └── reihenschieber.py
 ├── examples/
 │   ├── custom_alphabets.py
 │   ├── polygraphic_example.py
@@ -43,6 +44,7 @@ cryptology/
 │   ├── gronsfeld_example.py
 │   ├── porta_example.py
 │   ├── porta_enhanced_example.py
+│   ├── reihenschieber_example.py
 │   ├── custom_pairing_strategies.py
 │   └── composable_ciphers.py
 ├── tests/
@@ -97,6 +99,7 @@ import cryptology.classical.substitution.polyalphabetic.autokey as autokey
 import cryptology.classical.substitution.polyalphabetic.chaocipher as chaocipher
 import cryptology.classical.substitution.polyalphabetic.gronsfeld as gronsfeld
 import cryptology.classical.substitution.polyalphabetic.porta as porta
+import cryptology.classical.substitution.polyalphabetic.reihenschieber as reihenschieber
 
 # Vigenère cipher - table-based polyalphabetic substitution
 encrypted = vigenere.encrypt("HELLO WORLD", "KEY")
@@ -121,6 +124,14 @@ decrypted = gronsfeld.decrypt(encrypted, "12345")
 # Porta cipher - self-reciprocal with custom pairing
 encrypted = porta.encrypt("HELLO WORLD", "KEY")
 decrypted = porta.decrypt(encrypted, "KEY")  # Same as encrypt
+
+# Reihenschieber cipher - mechanical polyalphabetic with shifting strips
+encrypted = reihenschieber.encrypt("HELLO WORLD", "KEY")
+decrypted = reihenschieber.decrypt(encrypted, "KEY")
+
+# Custom shift patterns for Reihenschieber
+shifts = reihenschieber.produce_custom_shifts("fibonacci", 10)
+encrypted = reihenschieber.encrypt("HELLO WORLD", "KEY", shift_mode="custom", custom_shifts=shifts)
 
 # Custom pairing strategies for Porta
 from cryptology.classical.substitution.polyalphabetic import porta_produce_pairs

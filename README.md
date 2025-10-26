@@ -146,7 +146,15 @@ cryptology/
    - **Turkish alphabet support** with proper 14-pair system
    - **Balanced pairing** for arbitrary alphabet sizes
    - Random key generation with alphabetic keys
-   - Enhanced security through flexible pair generation
+
+8. **Reihenschieber Cipher** - Mechanical polyalphabetic substitution with shifting strips
+   - Mechanical implementation of Vigenère cipher with progressive shifting
+   - **Multiple shift modes**: Fixed (default), Progressive, Custom
+   - **Shift directions**: Forward (default), Backward
+   - **Custom shift patterns**: Alternating, Fibonacci, Prime, Random
+   - **Progressive shifting**: Each character uses cumulative shift values
+   - Random key generation and Turkish alphabet support
+   - Enhanced security through mechanical strip shifting concept
 
 ## Composable Cipher System
 
@@ -220,6 +228,7 @@ python examples/chaocipher_example.py
 python examples/gronsfeld_example.py
 python examples/porta_example.py
 python examples/porta_enhanced_example.py
+python examples/reihenschieber_example.py
 python examples/custom_pairing_strategies.py
 python examples/composable_ciphers.py
 ```
@@ -256,6 +265,13 @@ encrypted = gronsfeld.encrypt("HELLO WORLD", "12345")
 import cryptology.classical.substitution.polyalphabetic.porta as porta
 encrypted = porta.encrypt("HELLO WORLD", "KEY")
 
+import cryptology.classical.substitution.polyalphabetic.reihenschieber as reihenschieber
+encrypted = reihenschieber.encrypt("HELLO WORLD", "KEY")
+
+# Custom shift patterns for Reihenschieber
+shifts = reihenschieber.produce_custom_shifts("fibonacci", 10)
+encrypted = reihenschieber.encrypt("HELLO WORLD", "KEY", shift_mode="custom", custom_shifts=shifts)
+
 # Custom pairing strategies for Porta
 from cryptology.classical.substitution.polyalphabetic import porta_produce_pairs
 pairs = porta_produce_pairs('frequency', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')
@@ -280,6 +296,7 @@ make run-autokey
 make run-chaocipher
 make run-gronsfeld
 make run-porta
+make run-reihenschieber
 make run-composable
 ```
 
@@ -293,6 +310,7 @@ make run-composable
 #include "cryptology/classical/substitution/polyalphabetic/chaocipher.h"
 #include "cryptology/classical/substitution/polyalphabetic/gronsfeld.h"
 #include "cryptology/classical/substitution/polyalphabetic/porta.h"
+#include "cryptology/classical/substitution/polyalphabetic/reihenschieber.h"
 
 char encrypted[1024];
 char caesar_alphabet[1024];
@@ -307,6 +325,7 @@ autokey_encrypt("HELLO WORLD", "KEY", NULL, NULL, encrypted, sizeof(encrypted));
 chaocipher_encrypt("HELLO WORLD", "KEY", NULL, NULL, encrypted, sizeof(encrypted));
 gronsfeld_encrypt("HELLO WORLD", "12345", NULL, NULL, encrypted, sizeof(encrypted));
 porta_encrypt("HELLO WORLD", "KEY", NULL, NULL, 0, encrypted, sizeof(encrypted));
+reihenschieber_encrypt("HELLO WORLD", "KEY", NULL, "fixed", "forward", 1, NULL, 0, encrypted, sizeof(encrypted));
 
 // Composable system
 caesar_produce_alphabet(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", caesar_alphabet, sizeof(caesar_alphabet));
@@ -460,7 +479,7 @@ make run-composable
 - ✅ **5 Monoalphabetic** substitution ciphers
 - ✅ **4 Polygraphic** substitution ciphers  
 - ✅ **2 Fractionated** substitution ciphers
-- ✅ **7 Polyalphabetic** substitution ciphers
+- ✅ **8 Polyalphabetic** substitution ciphers
 - ✅ **Composable system** for unlimited combinations
 - ✅ **Custom alphabet support** (any language/character set)
 - ✅ **Letter combination strategies** for non-English languages

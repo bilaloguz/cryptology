@@ -31,7 +31,7 @@ POLYGRAPHIC_SOURCES = $(POLYGRAPHIC_SRC_DIR)/alphabet_utils.c \
 FRACTIONATED_SOURCES = $(FRACTIONATED_SRC_DIR)/bifid.c \
                       $(FRACTIONATED_SRC_DIR)/trifid.c
 
-POLYALPHABETIC_SOURCES = $(POLYALPHABETIC_SRC_DIR)/alberti.c $(POLYALPHABETIC_SRC_DIR)/vigenere.c $(POLYALPHABETIC_SRC_DIR)/beaufort.c $(POLYALPHABETIC_SRC_DIR)/autokey.c $(POLYALPHABETIC_SRC_DIR)/chaocipher.c $(POLYALPHABETIC_SRC_DIR)/gronsfeld.c $(POLYALPHABETIC_SRC_DIR)/porta.c
+POLYALPHABETIC_SOURCES = $(POLYALPHABETIC_SRC_DIR)/alberti.c $(POLYALPHABETIC_SRC_DIR)/vigenere.c $(POLYALPHABETIC_SRC_DIR)/beaufort.c $(POLYALPHABETIC_SRC_DIR)/autokey.c $(POLYALPHABETIC_SRC_DIR)/chaocipher.c $(POLYALPHABETIC_SRC_DIR)/gronsfeld.c $(POLYALPHABETIC_SRC_DIR)/porta.c $(POLYALPHABETIC_SRC_DIR)/reihenschieber.c
 
 SOURCES = $(MONOALPHABETIC_SOURCES) $(POLYGRAPHIC_SOURCES) $(FRACTIONATED_SOURCES) $(POLYALPHABETIC_SOURCES)
 
@@ -45,7 +45,7 @@ OBJECTS = $(MONOALPHABETIC_OBJECTS) $(POLYGRAPHIC_OBJECTS) $(FRACTIONATED_OBJECT
 LIBRARY = $(LIB_DIR)/libcryptology.a
 
 # Examples
-EXAMPLES = $(BIN_DIR)/example $(BIN_DIR)/custom_alphabets $(BIN_DIR)/polygraphic_example $(BIN_DIR)/composable_ciphers $(BIN_DIR)/fractionated_example $(BIN_DIR)/alberti_example $(BIN_DIR)/vigenere_example $(BIN_DIR)/beaufort_example $(BIN_DIR)/autokey_example $(BIN_DIR)/chaocipher_example $(BIN_DIR)/gronsfeld_example $(BIN_DIR)/porta_example $(BIN_DIR)/test_chaocipher
+EXAMPLES = $(BIN_DIR)/example $(BIN_DIR)/custom_alphabets $(BIN_DIR)/polygraphic_example $(BIN_DIR)/composable_ciphers $(BIN_DIR)/fractionated_example $(BIN_DIR)/alberti_example $(BIN_DIR)/vigenere_example $(BIN_DIR)/beaufort_example $(BIN_DIR)/autokey_example $(BIN_DIR)/chaocipher_example $(BIN_DIR)/gronsfeld_example $(BIN_DIR)/porta_example $(BIN_DIR)/reihenschieber_example $(BIN_DIR)/test_chaocipher
 
 # Targets
 .PHONY: all clean examples tests
@@ -112,6 +112,9 @@ $(BIN_DIR)/gronsfeld_example: $(EXAMPLE_DIR)/gronsfeld_example.c $(LIBRARY) | $(
 $(BIN_DIR)/porta_example: $(EXAMPLE_DIR)/porta_example.c $(LIBRARY) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
 
+$(BIN_DIR)/reihenschieber_example: $(EXAMPLE_DIR)/reihenschieber_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
 $(BIN_DIR)/test_chaocipher: test_chaocipher_simple.c $(LIBRARY) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
 
@@ -150,6 +153,9 @@ run-gronsfeld: $(BIN_DIR)/gronsfeld_example
 run-porta: $(BIN_DIR)/porta_example
 	./$(BIN_DIR)/porta_example
 
+run-reihenschieber: $(BIN_DIR)/reihenschieber_example
+	./$(BIN_DIR)/reihenschieber_example
+
 run-test-chaocipher: $(BIN_DIR)/test_chaocipher
 	./$(BIN_DIR)/test_chaocipher
 
@@ -170,5 +176,8 @@ help:
 	@echo "  run-vigenere    - Run Vigenère cipher example"
 	@echo "  run-beaufort    - Run Beaufort cipher example"
 	@echo "  run-chaocipher   - Run Chaocipher cipher example"
+	@echo "  run-gronsfeld    - Run Gronsfeld cipher example"
+	@echo "  run-porta        - Run Porta cipher example"
+	@echo "  run-reihenschieber - Run Reihenschieber cipher example"
 	@echo "  help            - Show this help message"
 

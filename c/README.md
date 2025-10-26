@@ -31,7 +31,8 @@ c/
 │                   ├── autokey.h
 │                   ├── chaocipher.h
 │                   ├── gronsfeld.h
-│                   └── porta.h
+│                   ├── porta.h
+│                   └── reihenschieber.h
 ├── src/
 │   └── classical/
 │       └── substitution/
@@ -56,7 +57,8 @@ c/
 │               ├── autokey.c
 │               ├── chaocipher.c
 │               ├── gronsfeld.c
-│               └── porta.c
+│               ├── porta.c
+│               └── reihenschieber.c
 ├── examples/
 │   ├── example.c
 │   ├── custom_alphabets.c
@@ -68,7 +70,8 @@ c/
 │   ├── autokey_example.c
 │   ├── chaocipher_example.c
 │   ├── gronsfeld_example.c
-│   └── porta_example.c
+│   ├── porta_example.c
+│   └── reihenschieber_example.c
 ├── Makefile
 └── README.md
 ```
@@ -205,6 +208,10 @@ gronsfeld_decrypt(encrypted, "12345", NULL, NULL, decrypted, sizeof(decrypted));
 // Porta cipher - self-reciprocal with custom pairing
 porta_encrypt("HELLO WORLD", "KEY", NULL, NULL, 0, encrypted, sizeof(encrypted));
 porta_decrypt(encrypted, "KEY", NULL, NULL, 0, decrypted, sizeof(decrypted));  // Same as encrypt
+
+// Reihenschieber cipher - mechanical polyalphabetic with shifting strips
+reihenschieber_encrypt("HELLO WORLD", "KEY", NULL, "fixed", "forward", 1, NULL, 0, encrypted, sizeof(encrypted));
+reihenschieber_decrypt(encrypted, "KEY", NULL, "fixed", "forward", 1, NULL, 0, decrypted, sizeof(decrypted));
 ```
 
 ## Custom Alphabets
@@ -248,6 +255,7 @@ make run-autokey
 make run-chaocipher
 make run-gronsfeld
 make run-porta
+make run-reihenschieber
 ```
 
 ## API Reference
