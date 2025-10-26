@@ -8,6 +8,7 @@ LDFLAGS = -lm
 MONOALPHABETIC_SRC_DIR = src/classical/substitution/monoalphabetic
 POLYGRAPHIC_SRC_DIR = src/classical/substitution/polygraphic
 FRACTIONATED_SRC_DIR = src/classical/substitution/fractionated
+POLYALPHABETIC_SRC_DIR = src/classical/substitution/polyalphabetic
 OBJ_DIR = build/obj
 BIN_DIR = build/bin
 LIB_DIR = build/lib
@@ -30,18 +31,21 @@ POLYGRAPHIC_SOURCES = $(POLYGRAPHIC_SRC_DIR)/alphabet_utils.c \
 FRACTIONATED_SOURCES = $(FRACTIONATED_SRC_DIR)/bifid.c \
                       $(FRACTIONATED_SRC_DIR)/trifid.c
 
-SOURCES = $(MONOALPHABETIC_SOURCES) $(POLYGRAPHIC_SOURCES) $(FRACTIONATED_SOURCES)
+POLYALPHABETIC_SOURCES = $(POLYALPHABETIC_SRC_DIR)/alberti.c $(POLYALPHABETIC_SRC_DIR)/vigenere.c $(POLYALPHABETIC_SRC_DIR)/beaufort.c $(POLYALPHABETIC_SRC_DIR)/autokey.c $(POLYALPHABETIC_SRC_DIR)/chaocipher.c $(POLYALPHABETIC_SRC_DIR)/gronsfeld.c $(POLYALPHABETIC_SRC_DIR)/porta.c
+
+SOURCES = $(MONOALPHABETIC_SOURCES) $(POLYGRAPHIC_SOURCES) $(FRACTIONATED_SOURCES) $(POLYALPHABETIC_SOURCES)
 
 MONOALPHABETIC_OBJECTS = $(MONOALPHABETIC_SOURCES:$(MONOALPHABETIC_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 POLYGRAPHIC_OBJECTS = $(POLYGRAPHIC_SOURCES:$(POLYGRAPHIC_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 FRACTIONATED_OBJECTS = $(FRACTIONATED_SOURCES:$(FRACTIONATED_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJECTS = $(MONOALPHABETIC_OBJECTS) $(POLYGRAPHIC_OBJECTS) $(FRACTIONATED_OBJECTS)
+POLYALPHABETIC_OBJECTS = $(POLYALPHABETIC_SOURCES:$(POLYALPHABETIC_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+OBJECTS = $(MONOALPHABETIC_OBJECTS) $(POLYGRAPHIC_OBJECTS) $(FRACTIONATED_OBJECTS) $(POLYALPHABETIC_OBJECTS)
 
 # Library
 LIBRARY = $(LIB_DIR)/libcryptology.a
 
 # Examples
-EXAMPLES = $(BIN_DIR)/example $(BIN_DIR)/custom_alphabets $(BIN_DIR)/polygraphic_example $(BIN_DIR)/composable_ciphers $(BIN_DIR)/fractionated_example
+EXAMPLES = $(BIN_DIR)/example $(BIN_DIR)/custom_alphabets $(BIN_DIR)/polygraphic_example $(BIN_DIR)/composable_ciphers $(BIN_DIR)/fractionated_example $(BIN_DIR)/alberti_example $(BIN_DIR)/vigenere_example $(BIN_DIR)/beaufort_example $(BIN_DIR)/autokey_example $(BIN_DIR)/chaocipher_example $(BIN_DIR)/gronsfeld_example $(BIN_DIR)/porta_example $(BIN_DIR)/test_chaocipher
 
 # Targets
 .PHONY: all clean examples tests
@@ -60,6 +64,9 @@ $(OBJ_DIR)/%.o: $(POLYGRAPHIC_SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(FRACTIONATED_SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(POLYALPHABETIC_SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Create static library
@@ -84,6 +91,30 @@ $(BIN_DIR)/composable_ciphers: $(EXAMPLE_DIR)/composable_ciphers.c $(LIBRARY) | 
 $(BIN_DIR)/fractionated_example: $(EXAMPLE_DIR)/fractionated_example.c $(LIBRARY) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
 
+$(BIN_DIR)/alberti_example: $(EXAMPLE_DIR)/alberti_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
+$(BIN_DIR)/vigenere_example: $(EXAMPLE_DIR)/vigenere_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
+$(BIN_DIR)/beaufort_example: $(EXAMPLE_DIR)/beaufort_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
+$(BIN_DIR)/autokey_example: $(EXAMPLE_DIR)/autokey_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
+$(BIN_DIR)/chaocipher_example: $(EXAMPLE_DIR)/chaocipher_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
+$(BIN_DIR)/gronsfeld_example: $(EXAMPLE_DIR)/gronsfeld_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
+$(BIN_DIR)/porta_example: $(EXAMPLE_DIR)/porta_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
+$(BIN_DIR)/test_chaocipher: test_chaocipher_simple.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
 # Clean build artifacts
 clean:
 	rm -rf build
@@ -104,6 +135,24 @@ run-composable: $(BIN_DIR)/composable_ciphers
 run-fractionated: $(BIN_DIR)/fractionated_example
 	./$(BIN_DIR)/fractionated_example
 
+run-alberti: $(BIN_DIR)/alberti_example
+	./$(BIN_DIR)/alberti_example
+
+run-vigenere: $(BIN_DIR)/vigenere_example
+	./$(BIN_DIR)/vigenere_example
+
+run-beaufort: $(BIN_DIR)/beaufort_example
+	./$(BIN_DIR)/beaufort_example
+
+run-gronsfeld: $(BIN_DIR)/gronsfeld_example
+	./$(BIN_DIR)/gronsfeld_example
+
+run-porta: $(BIN_DIR)/porta_example
+	./$(BIN_DIR)/porta_example
+
+run-test-chaocipher: $(BIN_DIR)/test_chaocipher
+	./$(BIN_DIR)/test_chaocipher
+
 # Help
 help:
 	@echo "Cryptology C Library - Build System"
@@ -117,5 +166,9 @@ help:
 	@echo "  run-polygraphic - Run polygraphic ciphers example"
 	@echo "  run-composable  - Run composable cipher system example"
 	@echo "  run-fractionated - Run fractionated ciphers example"
+	@echo "  run-alberti     - Run Alberti cipher example"
+	@echo "  run-vigenere    - Run Vigenère cipher example"
+	@echo "  run-beaufort    - Run Beaufort cipher example"
+	@echo "  run-chaocipher   - Run Chaocipher cipher example"
 	@echo "  help            - Show this help message"
 

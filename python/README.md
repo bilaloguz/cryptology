@@ -9,14 +9,42 @@ cryptology/
 ├── cryptology/
 │   └── classical/
 │       └── substitution/
-│           └── monoalphabetic/
-│               ├── caesar.py
-│               ├── rot13.py
-│               ├── atbash.py
-│               ├── keyword.py
-│               └── affine.py
+│           ├── monoalphabetic/
+│           │   ├── caesar.py
+│           │   ├── rot13.py
+│           │   ├── atbash.py
+│           │   ├── keyword.py
+│           │   └── affine.py
+│           ├── polygraphic/
+│           │   ├── playfair.py
+│           │   ├── two_square.py
+│           │   ├── four_square.py
+│           │   └── hill.py
+│           ├── fractionated/
+│           │   ├── bifid.py
+│           │   └── trifid.py
+│           └── polyalphabetic/
+│               ├── alberti.py
+│               ├── vigenere.py
+│               ├── beaufort.py
+│               ├── autokey.py
+│               ├── chaocipher.py
+│               ├── gronsfeld.py
+│               └── porta.py
 ├── examples/
-│   └── custom_alphabets.py
+│   ├── custom_alphabets.py
+│   ├── polygraphic_example.py
+│   ├── fractionated_example.py
+│   ├── alberti_example.py
+│   ├── vigenere_example.py
+│   ├── beaufort_example.py
+│   ├── autokey_example.py
+│   ├── chaocipher_example.py
+│   ├── gronsfeld_example.py
+│   ├── porta_example.py
+│   ├── porta_enhanced_example.py
+│   ├── custom_pairing_strategies.py
+│   └── composable_ciphers.py
 ├── tests/
 ├── ALPHABETS.md
 ├── README.md
@@ -58,6 +86,46 @@ decrypted = keyword.decrypt(encrypted, "secret")  # Returns: 'hello'
 encrypted = affine.encrypt("HELLO", 5, 8)  # Returns: 'rclla'
 decrypted = affine.decrypt(encrypted, 5, 8)  # Returns: 'hello'
 # Note: 'a' must be coprime with alphabet length
+```
+
+### Polyalphabetic Substitution Ciphers
+
+```python
+import cryptology.classical.substitution.polyalphabetic.vigenere as vigenere
+import cryptology.classical.substitution.polyalphabetic.beaufort as beaufort
+import cryptology.classical.substitution.polyalphabetic.autokey as autokey
+import cryptology.classical.substitution.polyalphabetic.chaocipher as chaocipher
+import cryptology.classical.substitution.polyalphabetic.gronsfeld as gronsfeld
+import cryptology.classical.substitution.polyalphabetic.porta as porta
+
+# Vigenère cipher - table-based polyalphabetic substitution
+encrypted = vigenere.encrypt("HELLO WORLD", "KEY")
+decrypted = vigenere.decrypt(encrypted, "KEY")
+
+# Beaufort cipher - self-reciprocal subtraction-based
+encrypted = beaufort.encrypt("HELLO WORLD", "KEY")
+decrypted = beaufort.decrypt(encrypted, "KEY")  # Same as encrypt
+
+# Auto-key cipher - self-extending key
+encrypted = autokey.encrypt("HELLO WORLD", "KEY")
+decrypted = autokey.decrypt(encrypted, "KEY")
+
+# Chaocipher - dynamic alphabet permutation
+encrypted = chaocipher.encrypt("HELLO WORLD", "KEY")
+decrypted = chaocipher.decrypt(encrypted, "KEY")  # Same as encrypt
+
+# Gronsfeld cipher - numeric key variant of Vigenère
+encrypted = gronsfeld.encrypt("HELLO WORLD", "12345")
+decrypted = gronsfeld.decrypt(encrypted, "12345")
+
+# Porta cipher - self-reciprocal with custom pairing
+encrypted = porta.encrypt("HELLO WORLD", "KEY")
+decrypted = porta.decrypt(encrypted, "KEY")  # Same as encrypt
+
+# Custom pairing strategies for Porta
+from cryptology.classical.substitution.polyalphabetic import porta_produce_pairs
+pairs = porta_produce_pairs('frequency', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+encrypted = porta.encrypt("HELLO WORLD", "KEY", pairs=pairs)
 ```
 
 ### Cipher Relationships
