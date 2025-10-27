@@ -9,6 +9,7 @@ MONOALPHABETIC_SRC_DIR = src/classical/substitution/monoalphabetic
 POLYGRAPHIC_SRC_DIR = src/classical/substitution/polygraphic
 FRACTIONATED_SRC_DIR = src/classical/substitution/fractionated
 POLYALPHABETIC_SRC_DIR = src/classical/substitution/polyalphabetic
+COMPOSITE_SRC_DIR = src/classical/substitution/composite
 OBJ_DIR = build/obj
 BIN_DIR = build/bin
 LIB_DIR = build/lib
@@ -23,6 +24,7 @@ MONOALPHABETIC_SOURCES = $(MONOALPHABETIC_SRC_DIR)/caesar.c \
                         $(MONOALPHABETIC_SRC_DIR)/affine.c
 
 POLYGRAPHIC_SOURCES = $(POLYGRAPHIC_SRC_DIR)/alphabet_utils.c \
+                     $(POLYGRAPHIC_SRC_DIR)/monoalphabetic_squares.c \
                      $(POLYGRAPHIC_SRC_DIR)/playfair.c \
                      $(POLYGRAPHIC_SRC_DIR)/two_square.c \
                      $(POLYGRAPHIC_SRC_DIR)/four_square.c \
@@ -33,19 +35,22 @@ FRACTIONATED_SOURCES = $(FRACTIONATED_SRC_DIR)/bifid.c \
 
 POLYALPHABETIC_SOURCES = $(POLYALPHABETIC_SRC_DIR)/alberti.c $(POLYALPHABETIC_SRC_DIR)/vigenere.c $(POLYALPHABETIC_SRC_DIR)/beaufort.c $(POLYALPHABETIC_SRC_DIR)/autokey.c $(POLYALPHABETIC_SRC_DIR)/chaocipher.c $(POLYALPHABETIC_SRC_DIR)/gronsfeld.c $(POLYALPHABETIC_SRC_DIR)/porta.c $(POLYALPHABETIC_SRC_DIR)/reihenschieber.c
 
-SOURCES = $(MONOALPHABETIC_SOURCES) $(POLYGRAPHIC_SOURCES) $(FRACTIONATED_SOURCES) $(POLYALPHABETIC_SOURCES)
+COMPOSITE_SOURCES = $(COMPOSITE_SRC_DIR)/straddling_checkerboard.c $(COMPOSITE_SRC_DIR)/nihilist.c $(COMPOSITE_SRC_DIR)/adfgvx.c $(COMPOSITE_SRC_DIR)/vic.c
+
+SOURCES = $(MONOALPHABETIC_SOURCES) $(POLYGRAPHIC_SOURCES) $(FRACTIONATED_SOURCES) $(POLYALPHABETIC_SOURCES) $(COMPOSITE_SOURCES)
 
 MONOALPHABETIC_OBJECTS = $(MONOALPHABETIC_SOURCES:$(MONOALPHABETIC_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 POLYGRAPHIC_OBJECTS = $(POLYGRAPHIC_SOURCES:$(POLYGRAPHIC_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 FRACTIONATED_OBJECTS = $(FRACTIONATED_SOURCES:$(FRACTIONATED_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 POLYALPHABETIC_OBJECTS = $(POLYALPHABETIC_SOURCES:$(POLYALPHABETIC_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJECTS = $(MONOALPHABETIC_OBJECTS) $(POLYGRAPHIC_OBJECTS) $(FRACTIONATED_OBJECTS) $(POLYALPHABETIC_OBJECTS)
+COMPOSITE_OBJECTS = $(COMPOSITE_SOURCES:$(COMPOSITE_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+OBJECTS = $(MONOALPHABETIC_OBJECTS) $(POLYGRAPHIC_OBJECTS) $(FRACTIONATED_OBJECTS) $(POLYALPHABETIC_OBJECTS) $(COMPOSITE_OBJECTS)
 
 # Library
 LIBRARY = $(LIB_DIR)/libcryptology.a
 
 # Examples
-EXAMPLES = $(BIN_DIR)/example $(BIN_DIR)/custom_alphabets $(BIN_DIR)/polygraphic_example $(BIN_DIR)/composable_ciphers $(BIN_DIR)/fractionated_example $(BIN_DIR)/alberti_example $(BIN_DIR)/vigenere_example $(BIN_DIR)/beaufort_example $(BIN_DIR)/autokey_example $(BIN_DIR)/chaocipher_example $(BIN_DIR)/gronsfeld_example $(BIN_DIR)/porta_example $(BIN_DIR)/reihenschieber_example $(BIN_DIR)/test_chaocipher
+EXAMPLES = $(BIN_DIR)/example $(BIN_DIR)/custom_alphabets $(BIN_DIR)/polygraphic_example $(BIN_DIR)/composable_ciphers $(BIN_DIR)/fractionated_example $(BIN_DIR)/alberti_example $(BIN_DIR)/vigenere_example $(BIN_DIR)/beaufort_example $(BIN_DIR)/autokey_example $(BIN_DIR)/chaocipher_example $(BIN_DIR)/gronsfeld_example $(BIN_DIR)/porta_example $(BIN_DIR)/reihenschieber_example $(BIN_DIR)/straddling_checkerboard_example $(BIN_DIR)/nihilist_example $(BIN_DIR)/adfgvx_example $(BIN_DIR)/vic_example $(BIN_DIR)/test_chaocipher
 
 # Targets
 .PHONY: all clean examples tests
@@ -67,6 +72,9 @@ $(OBJ_DIR)/%.o: $(FRACTIONATED_SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(POLYALPHABETIC_SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(COMPOSITE_SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Create static library
@@ -115,6 +123,18 @@ $(BIN_DIR)/porta_example: $(EXAMPLE_DIR)/porta_example.c $(LIBRARY) | $(BIN_DIR)
 $(BIN_DIR)/reihenschieber_example: $(EXAMPLE_DIR)/reihenschieber_example.c $(LIBRARY) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
 
+$(BIN_DIR)/straddling_checkerboard_example: $(EXAMPLE_DIR)/straddling_checkerboard_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
+$(BIN_DIR)/nihilist_example: $(EXAMPLE_DIR)/nihilist_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
+$(BIN_DIR)/adfgvx_example: $(EXAMPLE_DIR)/adfgvx_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
+$(BIN_DIR)/vic_example: $(EXAMPLE_DIR)/vic_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
 $(BIN_DIR)/test_chaocipher: test_chaocipher_simple.c $(LIBRARY) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
 
@@ -156,6 +176,9 @@ run-porta: $(BIN_DIR)/porta_example
 run-reihenschieber: $(BIN_DIR)/reihenschieber_example
 	./$(BIN_DIR)/reihenschieber_example
 
+run-straddling-checkerboard: $(BIN_DIR)/straddling_checkerboard_example
+	./$(BIN_DIR)/straddling_checkerboard_example
+
 run-test-chaocipher: $(BIN_DIR)/test_chaocipher
 	./$(BIN_DIR)/test_chaocipher
 
@@ -179,5 +202,6 @@ help:
 	@echo "  run-gronsfeld    - Run Gronsfeld cipher example"
 	@echo "  run-porta        - Run Porta cipher example"
 	@echo "  run-reihenschieber - Run Reihenschieber cipher example"
+	@echo "  run-straddling-checkerboard - Run Straddling Checkerboard cipher example"
 	@echo "  help            - Show this help message"
 

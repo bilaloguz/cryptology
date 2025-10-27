@@ -118,6 +118,32 @@ make clean
 #include "cryptology/classical/substitution/polyalphabetic/chaocipher.h"
 #include "cryptology/classical/substitution/polyalphabetic/gronsfeld.h"
 #include "cryptology/classical/substitution/polyalphabetic/porta.h"
+
+#include "cryptology/classical/substitution/composite/straddling_checkerboard.h"
+#include "cryptology/classical/substitution/composite/nihilist.h"
+```
+
+### Composite Substitution Ciphers
+
+```c
+char encrypted[1024];
+char decrypted[1024];
+char checkerboard[1024];
+char square[1024];
+
+// Straddling Checkerboard cipher
+straddling_checkerboard_produce_checkerboard("frequency", NULL, checkerboard, sizeof(checkerboard));
+straddling_checkerboard_encrypt("HELLO WORLD", "12345", checkerboard, encrypted, sizeof(encrypted));
+straddling_checkerboard_decrypt(encrypted, "12345", checkerboard, decrypted, sizeof(decrypted));
+
+// Nihilist cipher
+nihilist_produce_square("frequency", NULL, NULL, square, sizeof(square));
+nihilist_encrypt("HELLO WORLD", "12345", square, "numeric", encrypted, sizeof(encrypted));
+nihilist_decrypt(encrypted, "12345", square, "numeric", decrypted, sizeof(decrypted));
+
+// Random key generation
+char random_key[1024];
+nihilist_generate_random_key(10, "numeric", random_key, sizeof(random_key));
 ```
 
 ### Caesar Cipher

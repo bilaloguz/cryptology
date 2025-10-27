@@ -139,6 +139,31 @@ pairs = porta_produce_pairs('frequency', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 encrypted = porta.encrypt("HELLO WORLD", "KEY", pairs=pairs)
 ```
 
+### Composite Substitution Ciphers
+
+```python
+import cryptology.classical.substitution.composite.straddling_checkerboard as straddling_checkerboard
+import cryptology.classical.substitution.composite.nihilist as nihilist
+
+# Straddling Checkerboard cipher - multi-stage substitution with fractionation
+checkerboard = straddling_checkerboard.produce_checkerboard("frequency")
+encrypted = straddling_checkerboard.encrypt("HELLO WORLD", "12345", checkerboard)
+decrypted = straddling_checkerboard.decrypt(encrypted, "12345", checkerboard)
+
+# Nihilist cipher - Polybius square with numeric key addition
+square = nihilist.produce_square("frequency")
+encrypted = nihilist.encrypt("HELLO WORLD", "12345", square=square)
+decrypted = nihilist.decrypt(encrypted, "12345", square=square)
+
+# Monoalphabetic square integration for Nihilist
+caesar_square = nihilist.produce_square("caesar", mono_params={"shift": 3})
+encrypted = nihilist.encrypt("HELLO", "12345", square=caesar_square)
+
+# Random key generation
+random_key = nihilist.generate_random_key(10, "numeric")
+encrypted, generated_key = nihilist.encrypt_with_random_key("HELLO WORLD", 10, "numeric")
+```
+
 ### Cipher Relationships
 
 The **Affine cipher** is the general form of all linear monoalphabetic substitution ciphers:
