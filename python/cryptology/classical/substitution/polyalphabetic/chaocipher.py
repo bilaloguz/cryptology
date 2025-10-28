@@ -111,7 +111,7 @@ def _prepare_text(text: str, alphabet: Optional[List[str]] = None) -> str:
         alphabet = list(string.ascii_uppercase) + [' ']  # Include space by default
     
     prepared = ""
-    for char in text.upper():
+    for char in text.lower():
         if char in alphabet:
             prepared += char
         elif char == ' ' and ' ' in alphabet:
@@ -221,7 +221,7 @@ def create_custom_alphabets(left_keyword: str = "", right_keyword: str = "") -> 
     if left_keyword:
         left_alphabet = []
         # Add keyword characters first
-        for char in left_keyword.upper():
+        for char in left_keyword.lower():
             if char in alphabet and char not in left_alphabet:
                 left_alphabet.append(char)
         # Add remaining alphabet characters
@@ -235,7 +235,7 @@ def create_custom_alphabets(left_keyword: str = "", right_keyword: str = "") -> 
     if right_keyword:
         right_alphabet = []
         # Add keyword characters first
-        for char in right_keyword.upper():
+        for char in right_keyword.lower():
             if char in alphabet and char not in right_alphabet:
                 right_alphabet.append(char)
         # Add remaining alphabet characters
@@ -309,8 +309,8 @@ def create_alphabets_with_mono_ciphers(left_cipher: str = "atbash", left_params:
         raise ValueError(f"Unsupported right cipher: {right_cipher}")
     
     # Convert to lists
-    left_alphabet = list(left_alphabet_str.upper())
-    right_alphabet = list(right_alphabet_str.upper())
+    left_alphabet = list(left_alphabet_str.lower())
+    right_alphabet = list(right_alphabet_str.lower())
     
     return left_alphabet, right_alphabet
 

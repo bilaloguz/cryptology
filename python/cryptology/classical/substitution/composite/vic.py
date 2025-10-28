@@ -18,8 +18,10 @@ from typing import Optional, Dict, Any, List, Tuple
 from ..polygraphic.monoalphabetic_squares import create_monoalphabetic_square
 
 # Default alphabets
-DEFAULT_VIC_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-TURKISH_VIC_ALPHABET = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ0123456"
+import cryptology.alphabets as ALPHABETS
+
+DEFAULT_VIC_ALPHABET = ALPHABETS.ENGLISH_WITH_DIGITS
+TURKISH_VIC_ALPHABET = ALPHABETS.TURKISH_WITH_DIGITS
 
 # VIC characters for substitution
 VIC_LETTERS = "ADFGVX"
@@ -70,7 +72,7 @@ def vic_encrypt(
     )
     
     # Step 2: Substitute to Polybius pairs
-    polybius_pairs = _substitute_to_polybius(plaintext.upper(), polybius_square)
+    polybius_pairs = _substitute_to_polybius(plaintext.lower(), polybius_square)
     
     # Step 3: Convert pairs to digits
     digits = _pairs_to_digits(polybius_pairs)
@@ -340,7 +342,7 @@ def _create_keyword_polybius_square(keyword: str, alphabet: str) -> str:
     # Remove duplicates from keyword while preserving order
     keyword_unique = []
     seen = set()
-    for char in keyword.upper():
+    for char in keyword.lower():
         if char in alphabet and char not in seen:
             keyword_unique.append(char)
             seen.add(char)
@@ -376,7 +378,7 @@ def _create_straddling_checkerboard(keyword: str, alphabet: str) -> str:
     # Remove duplicates from keyword while preserving order
     keyword_unique = []
     seen = set()
-    for char in keyword.upper():
+    for char in keyword.lower():
         if char in alphabet and char not in seen:
             keyword_unique.append(char)
             seen.add(char)
@@ -541,7 +543,7 @@ def _columnar_transposition(text: str, key: str, encrypt: bool = True) -> str:
     if not text or not key:
         raise ValueError("Text and key cannot be empty")
     
-    key_upper = key.upper()
+    key_upper = key.lower()
     text_len = len(text)
     
     # Get key order (indices sorted by key letters)

@@ -9,8 +9,10 @@ Note: ROT13 only makes sense for alphabets with an even number of characters,
 where the shift is half the alphabet size.
 """
 
+from cryptology import alphabets as ALPHABETS
+
 # Default English alphabet (lowercase only)
-DEFAULT_ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET
 
 
 def encrypt(plaintext: str, alphabet: str = DEFAULT_ALPHABET) -> str:
@@ -31,13 +33,13 @@ def encrypt(plaintext: str, alphabet: str = DEFAULT_ALPHABET) -> str:
     # Convert input to lowercase
     plaintext = plaintext.lower()
     result = []
-    shift = len(alphabet) // 2  # Half of the alphabet
+    shift = 13  # Fixed shift value (ROT13)
     
     for char in plaintext:
         if char in alphabet:
             # Find position in alphabet
             pos = alphabet.index(char)
-            # Shift by half the alphabet
+            # Shift by 13 positions
             new_pos = (pos + shift) % len(alphabet)
             result.append(alphabet[new_pos])
         else:
@@ -51,8 +53,8 @@ def decrypt(ciphertext: str, alphabet: str = DEFAULT_ALPHABET) -> str:
     """
     Decrypt ciphertext using ROT13.
     
-    Since ROT13 shifts by half the alphabet, encrypting twice returns
-    the original text. Therefore, decrypt is the same as encrypt.
+    Since ROT13 shifts by 13, decryption shifts by -13.
+    For English alphabet with 26 letters, ROT13 is self-reciprocal (encrypt twice).
     
     Args:
         ciphertext: The text to decrypt (will be converted to lowercase)
@@ -65,5 +67,21 @@ def decrypt(ciphertext: str, alphabet: str = DEFAULT_ALPHABET) -> str:
         >>> decrypt("URYYB")
         'hello'
     """
-    return encrypt(ciphertext, alphabet)
+    # Convert input to lowercase
+    ciphertext = ciphertext.lower()
+    result = []
+    shift = 13  # Fixed shift value (ROT13)
+    
+    for char in ciphertext:
+        if char in alphabet:
+            # Find position in alphabet
+            pos = alphabet.index(char)
+            # Shift back by 13 positions (decryption)
+            new_pos = (pos - shift) % len(alphabet)
+            result.append(alphabet[new_pos])
+        else:
+            # Keep characters not in alphabet unchanged
+            result.append(char)
+    
+    return ''.join(result)
 

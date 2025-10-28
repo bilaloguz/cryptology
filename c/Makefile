@@ -10,6 +10,11 @@ POLYGRAPHIC_SRC_DIR = src/classical/substitution/polygraphic
 FRACTIONATED_SRC_DIR = src/classical/substitution/fractionated
 POLYALPHABETIC_SRC_DIR = src/classical/substitution/polyalphabetic
 COMPOSITE_SRC_DIR = src/classical/substitution/composite
+TRANSPOSITION_SRC_DIR = src/classical/transposition
+SIMPLE_SRC_DIR = src/classical/transposition/simple
+COLUMNAR_SRC_DIR = src/classical/transposition/columnar
+ROUTE_SRC_DIR = src/classical/transposition/route
+COMPOUND_SRC_DIR = src/classical/transposition/compound
 OBJ_DIR = build/obj
 BIN_DIR = build/bin
 LIB_DIR = build/lib
@@ -37,20 +42,31 @@ POLYALPHABETIC_SOURCES = $(POLYALPHABETIC_SRC_DIR)/alberti.c $(POLYALPHABETIC_SR
 
 COMPOSITE_SOURCES = $(COMPOSITE_SRC_DIR)/straddling_checkerboard.c $(COMPOSITE_SRC_DIR)/nihilist.c $(COMPOSITE_SRC_DIR)/adfgvx.c $(COMPOSITE_SRC_DIR)/vic.c
 
-SOURCES = $(MONOALPHABETIC_SOURCES) $(POLYGRAPHIC_SOURCES) $(FRACTIONATED_SOURCES) $(POLYALPHABETIC_SOURCES) $(COMPOSITE_SOURCES)
+TRANSPOSITION_SOURCES = $(SIMPLE_SRC_DIR)/scytale.c $(SIMPLE_SRC_DIR)/rail_fence.c
+COLUMNAR_SOURCES = $(COLUMNAR_SRC_DIR)/single.c $(COLUMNAR_SRC_DIR)/double.c $(COLUMNAR_SRC_DIR)/disrupted.c $(COLUMNAR_SRC_DIR)/myszkowski.c
+ROUTE_SOURCES = $(ROUTE_SRC_DIR)/boustrophedon.c $(ROUTE_SRC_DIR)/knights_move.c $(ROUTE_SRC_DIR)/spiral.c
+UTF8_HELPER_SOURCES = $(TRANSPOSITION_SRC_DIR)/utf8_helpers.c
+COMPOUND_SOURCES = $(COMPOUND_SRC_DIR)/rasterschluessel_44.c
+
+SOURCES = $(MONOALPHABETIC_SOURCES) $(POLYGRAPHIC_SOURCES) $(FRACTIONATED_SOURCES) $(POLYALPHABETIC_SOURCES) $(COMPOSITE_SOURCES) $(TRANSPOSITION_SOURCES) $(COLUMNAR_SOURCES) $(ROUTE_SOURCES) $(COMPOUND_SOURCES) $(UTF8_HELPER_SOURCES)
 
 MONOALPHABETIC_OBJECTS = $(MONOALPHABETIC_SOURCES:$(MONOALPHABETIC_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 POLYGRAPHIC_OBJECTS = $(POLYGRAPHIC_SOURCES:$(POLYGRAPHIC_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 FRACTIONATED_OBJECTS = $(FRACTIONATED_SOURCES:$(FRACTIONATED_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 POLYALPHABETIC_OBJECTS = $(POLYALPHABETIC_SOURCES:$(POLYALPHABETIC_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 COMPOSITE_OBJECTS = $(COMPOSITE_SOURCES:$(COMPOSITE_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJECTS = $(MONOALPHABETIC_OBJECTS) $(POLYGRAPHIC_OBJECTS) $(FRACTIONATED_OBJECTS) $(POLYALPHABETIC_OBJECTS) $(COMPOSITE_OBJECTS)
+TRANSPOSITION_OBJECTS = $(TRANSPOSITION_SOURCES:$(SIMPLE_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+COLUMNAR_OBJECTS = $(COLUMNAR_SOURCES:$(COLUMNAR_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+ROUTE_OBJECTS = $(ROUTE_SOURCES:$(ROUTE_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+UTF8_HELPER_OBJECTS = $(UTF8_HELPER_SOURCES:$(TRANSPOSITION_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+COMPOUND_OBJECTS = $(COMPOUND_SOURCES:$(COMPOUND_SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+OBJECTS = $(MONOALPHABETIC_OBJECTS) $(POLYGRAPHIC_OBJECTS) $(FRACTIONATED_OBJECTS) $(POLYALPHABETIC_OBJECTS) $(COMPOSITE_OBJECTS) $(TRANSPOSITION_OBJECTS) $(COLUMNAR_OBJECTS) $(ROUTE_OBJECTS) $(COMPOUND_OBJECTS) $(UTF8_HELPER_OBJECTS)
 
 # Library
 LIBRARY = $(LIB_DIR)/libcryptology.a
 
 # Examples
-EXAMPLES = $(BIN_DIR)/example $(BIN_DIR)/custom_alphabets $(BIN_DIR)/polygraphic_example $(BIN_DIR)/composable_ciphers $(BIN_DIR)/fractionated_example $(BIN_DIR)/alberti_example $(BIN_DIR)/vigenere_example $(BIN_DIR)/beaufort_example $(BIN_DIR)/autokey_example $(BIN_DIR)/chaocipher_example $(BIN_DIR)/gronsfeld_example $(BIN_DIR)/porta_example $(BIN_DIR)/reihenschieber_example $(BIN_DIR)/straddling_checkerboard_example $(BIN_DIR)/nihilist_example $(BIN_DIR)/adfgvx_example $(BIN_DIR)/vic_example $(BIN_DIR)/test_chaocipher
+EXAMPLES = $(BIN_DIR)/example $(BIN_DIR)/custom_alphabets $(BIN_DIR)/polygraphic_example $(BIN_DIR)/composable_ciphers $(BIN_DIR)/fractionated_example $(BIN_DIR)/alberti_example $(BIN_DIR)/vigenere_example $(BIN_DIR)/beaufort_example $(BIN_DIR)/autokey_example $(BIN_DIR)/chaocipher_example $(BIN_DIR)/gronsfeld_example $(BIN_DIR)/porta_example $(BIN_DIR)/reihenschieber_example $(BIN_DIR)/straddling_checkerboard_example $(BIN_DIR)/nihilist_example $(BIN_DIR)/adfgvx_example $(BIN_DIR)/vic_example $(BIN_DIR)/transposition_example $(BIN_DIR)/test_chaocipher $(BIN_DIR)/rasterschluessel_44_example $(BIN_DIR)/columnar_transposition_example
 
 # Targets
 .PHONY: all clean examples tests
@@ -75,6 +91,21 @@ $(OBJ_DIR)/%.o: $(POLYALPHABETIC_SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(COMPOSITE_SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(SIMPLE_SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(COLUMNAR_SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(ROUTE_SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(TRANSPOSITION_SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(COMPOUND_SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Create static library
@@ -135,7 +166,16 @@ $(BIN_DIR)/adfgvx_example: $(EXAMPLE_DIR)/adfgvx_example.c $(LIBRARY) | $(BIN_DI
 $(BIN_DIR)/vic_example: $(EXAMPLE_DIR)/vic_example.c $(LIBRARY) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
 
+$(BIN_DIR)/transposition_example: $(EXAMPLE_DIR)/transposition_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
 $(BIN_DIR)/test_chaocipher: test_chaocipher_simple.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
+$(BIN_DIR)/rasterschluessel_44_example: $(EXAMPLE_DIR)/rasterschluessel_44_example.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
+
+$(BIN_DIR)/columnar_transposition_example: $(EXAMPLE_DIR)/columnar_transposition_example.c $(LIBRARY) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $< -L$(LIB_DIR) -lcryptology $(LDFLAGS) -o $@
 
 # Clean build artifacts

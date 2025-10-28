@@ -22,7 +22,7 @@ def _prepare_text(text: str, n: int) -> str:
         Prepared text (uppercase, letters only, X padding for proper length)
     """
     # Remove non-alphabetic characters and convert to uppercase
-    text_clean = re.sub(r'[^A-Za-z]', '', text.upper())
+    text_clean = re.sub(r'[^A-Za-z]', '', text.lower())
     
     # Add X padding to make length divisible by n
     while len(text_clean) % n != 0:

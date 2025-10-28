@@ -109,7 +109,7 @@ static void clean_text(const char* input, char* output, size_t output_size) {
     size_t i = 0, j = 0;
     while (input[i] && j < output_size - 1) {
         if (isalpha(input[i]) || isdigit(input[i])) {
-            output[j++] = toupper(input[i]);
+            output[j++] = tolower(input[i]);
         }
         i++;
     }

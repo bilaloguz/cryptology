@@ -13,7 +13,7 @@
 
 #define MAX_KEY_SIZE 256
 #define CUBE_SIZE 3
-#define DEFAULT_ALPHABET "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define DEFAULT_ALPHABET "abcdefghijklmnopqrstuvwxyz"
 
 static int find_char_in_cube(char cube[CUBE_SIZE][CUBE_SIZE][CUBE_SIZE], char c, int *layer, int *row, int *col) {
     for (int l = 0; l < CUBE_SIZE; l++) {
@@ -57,7 +57,7 @@ static int create_trifid_cube(const char *key, const char *alphabet, char cube[C
         }
     } else {
         // Standard English alphabet (I and J combined, 26 letters + 1 padding)
-        strcpy(processed_alphabet, "ABCDEFGHIKLMNOPQRSTUVWXYZ");  // 25 letters
+        strcpy(processed_alphabet, "abcdefghiklmnopqrstuvwxyz");  // 25 letters
         strcat(processed_alphabet, "X");  // Pad to 26
         strcat(processed_alphabet, "X");  // Pad to 27
     }
@@ -68,7 +68,7 @@ static int create_trifid_cube(const char *key, const char *alphabet, char cube[C
     int pos = 0;
     
     for (size_t i = 0; key[i] != '\0' && pos < MAX_KEY_SIZE - 1; i++) {
-        char c = toupper((unsigned char)key[i]);
+        char c = tolower((unsigned char)key[i]);
         if (c >= 'A' && c <= 'Z' && !seen[(unsigned char)c]) {
             key_clean[pos++] = c;
             seen[(unsigned char)c] = true;
@@ -78,7 +78,7 @@ static int create_trifid_cube(const char *key, const char *alphabet, char cube[C
     
     // Add remaining letters from processed alphabet
     for (size_t i = 0; processed_alphabet[i] != '\0' && pos < MAX_KEY_SIZE - 1; i++) {
-        char c = toupper((unsigned char)processed_alphabet[i]);
+        char c = tolower((unsigned char)processed_alphabet[i]);
         if (!seen[(unsigned char)c]) {
             key_clean[pos++] = c;
             seen[(unsigned char)c] = true;
@@ -124,7 +124,7 @@ static int prepare_text(const char *input, const char *alphabet, char *output, s
     size_t output_pos = 0;
     
     for (size_t i = 0; i < input_len && output_pos < output_size - 1; i++) {
-        char c = toupper((unsigned char)input[i]);
+        char c = tolower((unsigned char)input[i]);
         if (c >= 'A' && c <= 'Z') {
             // Handle custom alphabets
             if (strcmp(alphabet, DEFAULT_ALPHABET) != 0) {

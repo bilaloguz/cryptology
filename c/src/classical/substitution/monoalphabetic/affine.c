@@ -4,10 +4,11 @@
  */
 
 #include "cryptology/classical/substitution/monoalphabetic/affine.h"
+#include "cryptology/alphabets.h"
 #include <string.h>
 #include <ctype.h>
 
-#define DEFAULT_ALPHABET "abcdefghijklmnopqrstuvwxyz"
+#define DEFAULT_ALPHABET ENGLISH_ALPHABET
 
 static int gcd(int a, int b) {
     while (b != 0) {

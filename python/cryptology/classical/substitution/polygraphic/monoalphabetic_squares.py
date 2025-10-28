@@ -33,54 +33,54 @@ def create_monoalphabetic_square(
         ValueError: If required parameters are missing or invalid
     """
     if alphabet is None:
-        alphabet = string.ascii_uppercase
+        alphabet = string.ascii_lowercase
     
-    alphabet_upper = alphabet.upper()
+    alphabet_lower = alphabet.lower()
     
     # Generate transformed alphabet based on square type
     if square_type == "caesar":
         if not mono_params or "shift" not in mono_params:
             raise ValueError("Caesar square requires mono_params with 'shift' key")
-        transformed_alphabet = _create_caesar_alphabet(alphabet_upper, mono_params["shift"])
+        transformed_alphabet = _create_caesar_alphabet(alphabet_lower, mono_params["shift"])
     
     elif square_type == "atbash":
-        transformed_alphabet = _create_atbash_alphabet(alphabet_upper)
+        transformed_alphabet = _create_atbash_alphabet(alphabet_lower)
     
     elif square_type == "affine":
         if not mono_params or "a" not in mono_params or "b" not in mono_params:
             raise ValueError("Affine square requires mono_params with 'a' and 'b' keys")
-        transformed_alphabet = _create_affine_alphabet(alphabet_upper, mono_params["a"], mono_params["b"])
+        transformed_alphabet = _create_affine_alphabet(alphabet_lower, mono_params["a"], mono_params["b"])
     
     elif square_type == "keyword":
         if not mono_params or "keyword" not in mono_params:
             raise ValueError("Keyword square requires mono_params with 'keyword' key")
-        transformed_alphabet = _create_keyword_alphabet(alphabet_upper, mono_params["keyword"])
+        transformed_alphabet = _create_keyword_alphabet(alphabet_lower, mono_params["keyword"])
     
     else:
         raise ValueError(f"Invalid square_type: {square_type}")
     
     # Convert transformed alphabet to Polybius square
-    return _alphabet_to_square(transformed_alphabet, alphabet_upper)
+    return _alphabet_to_square(transformed_alphabet, alphabet_lower)
 
 
 def _create_caesar_alphabet(alphabet: str, shift: int) -> str:
-    """Create a Caesar-shifted alphabet."""
+    """Create a Caesar-shifted alphabet (lowercase)."""
     shifted_alphabet = ""
     for char in alphabet:
         if char.isalpha():
-            # Apply Caesar shift
-            shifted_char = chr((ord(char) - ord('A') + shift) % 26 + ord('A'))
+            # Apply Caesar shift (lowercase)
+            shifted_char = chr((ord(char) - ord('a') + shift) % 26 + ord('a'))
             shifted_alphabet += shifted_char
     return shifted_alphabet
 
 
 def _create_atbash_alphabet(alphabet: str) -> str:
-    """Create an Atbash-reversed alphabet."""
+    """Create an Atbash-reversed alphabet (lowercase)."""
     reversed_alphabet = ""
     for char in alphabet:
         if char.isalpha():
-            # Apply Atbash reversal
-            reversed_char = chr(ord('Z') - (ord(char) - ord('A')))
+            # Apply Atbash reversal (lowercase)
+            reversed_char = chr(ord('z') - (ord(char) - ord('a')))
             reversed_alphabet += reversed_char
     return reversed_alphabet
 
@@ -100,8 +100,8 @@ def _create_affine_alphabet(alphabet: str, a: int, b: int) -> str:
     affine_alphabet = ""
     for char in alphabet:
         if char.isalpha():
-            # Apply Affine transformation: E(x) = (ax + b) mod m
-            x = ord(char) - ord('A')
+            # Apply Affine transformation: E(x) = (ax + b) mod m (lowercase)
+            x = ord(char) - ord('a')
             encrypted_pos = (a * x + b) % len(alphabet)
             affine_char = alphabet[encrypted_pos]
             affine_alphabet += affine_char
@@ -110,12 +110,12 @@ def _create_affine_alphabet(alphabet: str, a: int, b: int) -> str:
 
 def _create_keyword_alphabet(alphabet: str, keyword: str) -> str:
     """Create a keyword-based alphabet."""
-    keyword_upper = keyword.upper()
+    keyword_lower = keyword.lower()
     
     # Remove duplicates from keyword while preserving order
     seen = set()
     keyword_unique = ""
-    for char in keyword_upper:
+    for char in keyword_lower:
         if char.isalpha() and char not in seen:
             keyword_unique += char
             seen.add(char)
@@ -130,15 +130,15 @@ def _create_keyword_alphabet(alphabet: str, keyword: str) -> str:
 
 
 def _alphabet_to_square(transformed_alphabet: str, original_alphabet: str) -> str:
-    """Convert a transformed alphabet to a Polybius square."""
-    # Handle I=J combination for English
-    if original_alphabet == "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-        transformed_alphabet = transformed_alphabet.replace('J', 'I')
+    """Convert a transformed alphabet to a Polybius square (lowercase)."""
+    # Handle j=i combination for English
+    if original_alphabet == "abcdefghijklmnopqrstuvwxyz":
+        transformed_alphabet = transformed_alphabet.replace('j', 'i')
     
     # Determine square size based on original alphabet
-    if original_alphabet == "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-        size = 5  # English uses 5x5 (25 letters with I=J)
-    elif original_alphabet == "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ":
+    if original_alphabet == "abcdefghijklmnopqrstuvwxyz":
+        size = 5  # English uses 5x5 (25 letters with j=i)
+    elif original_alphabet == "abcçdefgğhıijklmnoöprsştuüvyz":
         size = 6  # Turkish uses 6x6 (29 letters)
     else:
         size = 5 if len(transformed_alphabet) <= 25 else 6

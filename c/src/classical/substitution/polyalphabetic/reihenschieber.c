@@ -12,7 +12,7 @@
 #include <time.h>
 #include <ctype.h>
 
-#define DEFAULT_ALPHABET "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define DEFAULT_ALPHABET "abcdefghijklmnopqrstuvwxyz"
 #define TURKISH_ALPHABET "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
 #define MAX_ALPHABET_SIZE 50
 #define MAX_TEXT_SIZE 1000
@@ -22,7 +22,7 @@
  */
 static void to_upper(char* str) {
     for (int i = 0; str[i]; i++) {
-        str[i] = toupper(str[i]);
+        str[i] = tolower(str[i]);
     }
 }
 

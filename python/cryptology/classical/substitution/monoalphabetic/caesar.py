@@ -6,8 +6,10 @@ It is a type of substitution cipher where each letter in the plaintext is shifte
 a certain number of places down the alphabet.
 """
 
+from cryptology import alphabets as ALPHABETS
+
 # Default English alphabet (lowercase only)
-DEFAULT_ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET
 
 
 def encrypt(plaintext: str, shift: int = 3, alphabet: str = DEFAULT_ALPHABET) -> str:

@@ -14,12 +14,13 @@ This implementation supports:
 
 import random
 from typing import List, Union
+import cryptology.alphabets as ALPHABETS
 from ..monoalphabetic.caesar import produce_alphabet as caesar_produce
 from ..monoalphabetic.keyword import produce_alphabet as keyword_produce
 from ..monoalphabetic.affine import produce_alphabet as affine_produce
 from ..monoalphabetic.atbash import produce_alphabet as atbash_produce
 
-DEFAULT_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET
 
 
 def _generate_scrambled_alphabet(base_alphabet: str, seed: int = 42) -> str:
@@ -77,7 +78,7 @@ def _parse_rotation_strategy(strategy: Union[str, List[int]], plaintext: str) ->
         elif strategy == "on_vowel":
             # Rotate when plaintext is vowel
             vowels = "AEIOU"
-            return [i for i, char in enumerate(plaintext.upper()) if char in vowels]
+            return [i for i, char in enumerate(plaintext.lower()) if char in vowels]
         
         elif strategy == "on_space":
             # Rotate when plaintext is space
@@ -86,7 +87,7 @@ def _parse_rotation_strategy(strategy: Union[str, List[int]], plaintext: str) ->
         elif strategy == "on_consonant":
             # Rotate when plaintext is consonant
             vowels = "AEIOU"
-            return [i for i, char in enumerate(plaintext.upper()) if char.isalpha() and char not in vowels]
+            return [i for i, char in enumerate(plaintext.lower()) if char.isalpha() and char not in vowels]
         
         elif strategy == "fibonacci":
             # Rotate based on Fibonacci sequence
@@ -102,7 +103,7 @@ def _parse_rotation_strategy(strategy: Union[str, List[int]], plaintext: str) ->
             keyword = strategy.split("_", 2)[2]
             pattern = []
             for i, char in enumerate(plaintext):
-                if char.upper() in keyword.upper():
+                if char.lower() in keyword.lower():
                     pattern.append(i)
             return pattern
         
@@ -144,9 +145,9 @@ def _find_char_position(alphabet: str, char: str) -> int:
     Raises:
         ValueError: If character not found
     """
-    char_upper = char.upper()
+    char_upper = char.lower()
     for i, c in enumerate(alphabet):
-        if c.upper() == char_upper:
+        if c.lower() == char_upper:
             return i
     raise ValueError(f"Character '{char}' not found in alphabet")
 
@@ -195,7 +196,7 @@ def encrypt(plaintext: str,
     
     # Clean plaintext
     plaintext_clean = ""
-    for char in plaintext.upper():
+    for char in plaintext.lower():
         if char.isalpha():
             plaintext_clean += char
     
@@ -280,7 +281,7 @@ def decrypt(ciphertext: str,
     
     # Clean ciphertext
     ciphertext_clean = ""
-    for char in ciphertext.upper():
+    for char in ciphertext.lower():
         if char.isalpha():
             ciphertext_clean += char
     

@@ -20,7 +20,7 @@
 /**
  * @brief Default English alphabet with space
  */
-static const char DEFAULT_ALPHABET[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
+static const char DEFAULT_ALPHABET[] = "abcdefghijklmnopqrstuvwxyz ";
 
 /**
  * @brief Turkish alphabet with space
@@ -220,7 +220,7 @@ int chaocipher_prepare_text(const char *text,
     size_t text_len = strlen(text);
     
     for (size_t i = 0; i < text_len && output_pos < output_size - 1; i++) {
-        char c = toupper(text[i]);
+        char c = tolower(text[i]);
         
         if (is_in_alphabet(c, alphabet, alphabet_size)) {
             output[output_pos++] = c;

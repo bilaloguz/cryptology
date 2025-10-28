@@ -4,10 +4,11 @@
  */
 
 #include "cryptology/classical/substitution/monoalphabetic/caesar.h"
+#include "cryptology/alphabets.h"
 #include <string.h>
 #include <ctype.h>
 
-#define DEFAULT_ALPHABET "abcdefghijklmnopqrstuvwxyz"
+#define DEFAULT_ALPHABET ENGLISH_ALPHABET
 
 static int find_char_in_alphabet(char c, const char *alphabet) {
     const char *pos = strchr(alphabet, c);

@@ -13,7 +13,7 @@
 #include <ctype.h>
 #include <stdio.h>
 
-#define DEFAULT_ALPHABET "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define DEFAULT_ALPHABET "abcdefghijklmnopqrstuvwxyz"
 #define TURKISH_ALPHABET "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
 #define MAX_ALPHABET_SIZE 50
 #define MAX_TEXT_SIZE 1000
@@ -24,7 +24,7 @@
  */
 static void to_upper(char* str) {
     for (int i = 0; str[i]; i++) {
-        str[i] = toupper(str[i]);
+        str[i] = tolower(str[i]);
     }
 }
 
@@ -274,7 +274,7 @@ static int letters_to_digits(const char* text, const char* checkerboard, char* r
     int pos = 0;
     
     for (int i = 0; text[i] && pos < result_size - 1; i++) {
-        char c = toupper(text[i]);
+        char c = tolower(text[i]);
         char char_digits[10];
         
         if (find_char_mapping(checkerboard, c, char_digits, sizeof(char_digits)) == 0) {
@@ -451,7 +451,7 @@ int straddling_checkerboard_encrypt(
     int pos = 0;
     for (int i = 0; plaintext[i] && pos < sizeof(processed_text) - 1; i++) {
         if (plaintext[i] != ' ') {
-            processed_text[pos++] = toupper(plaintext[i]);
+            processed_text[pos++] = tolower(plaintext[i]);
         }
     }
     processed_text[pos] = '\0';
@@ -514,7 +514,7 @@ int straddling_checkerboard_decrypt(
     int pos = 0;
     for (int i = 0; ciphertext[i] && pos < sizeof(processed_text) - 1; i++) {
         if (ciphertext[i] != ' ') {
-            processed_text[pos++] = toupper(ciphertext[i]);
+            processed_text[pos++] = tolower(ciphertext[i]);
         }
     }
     processed_text[pos] = '\0';
@@ -560,7 +560,7 @@ static int create_frequency_checkerboard(const char* alphabet, char* result, siz
     char frequency_order[MAX_ALPHABET_SIZE];
     
     // Define frequency-based letter orders for English and Turkish
-    if (strcmp(alphabet_upper, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
+    if (strcmp(alphabet_upper, "abcdefghijklmnopqrstuvwxyz") == 0) {
         // English frequency order (most to least frequent)
         strcpy(frequency_order, "ETAOINSHRDLCUMWFGYPBVKJXQZ");
     } else if (strcmp(alphabet_upper, "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ") == 0) {
@@ -590,7 +590,7 @@ static int create_vowel_consonant_checkerboard(const char* alphabet, char* resul
     char consonants[MAX_ALPHABET_SIZE] = {0};
     
     // Define vowels and consonants
-    if (strcmp(alphabet_upper, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
+    if (strcmp(alphabet_upper, "abcdefghijklmnopqrstuvwxyz") == 0) {
         strcpy(vowels, "AEIOU");
         strcpy(consonants, "BCDFGHJKLMNPQRSTVWXYZ");
     } else if (strcmp(alphabet_upper, "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ") == 0) {

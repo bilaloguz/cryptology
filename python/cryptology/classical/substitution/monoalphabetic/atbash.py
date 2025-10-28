@@ -6,8 +6,10 @@ The first letter is replaced with the last, the second with the second-to-last, 
 Like ROT13, it is symmetric - encrypting twice returns the original text.
 """
 
+from cryptology import alphabets as ALPHABETS
+
 # Default English alphabet (lowercase only)
-DEFAULT_ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET
 
 
 def encrypt(plaintext: str, alphabet: str = DEFAULT_ALPHABET) -> str:

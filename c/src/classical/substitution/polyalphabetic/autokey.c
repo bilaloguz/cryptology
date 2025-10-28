@@ -19,7 +19,7 @@
 #include <time.h>
 #include <stdarg.h>
 
-#define DEFAULT_ALPHABET "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define DEFAULT_ALPHABET "abcdefghijklmnopqrstuvwxyz"
 #define TURKISH_ALPHABET "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
 
 int autokey_generate_random_key(int length, const char *alphabet, 
@@ -350,7 +350,7 @@ int autokey_prepare_text(const char *text, const char *alphabet,
     size_t result_index = 0;
     
     for (size_t i = 0; text[i] != '\0' && result_index < result_size - 1; i++) {
-        char char_upper = toupper(text[i]);
+        char char_upper = tolower(text[i]);
         
         if (isalpha(char_upper)) {
             // Handle custom alphabets
@@ -392,7 +392,7 @@ int autokey_prepare_ciphertext(const char *ciphertext,
     size_t result_index = 0;
     
     for (size_t i = 0; ciphertext[i] != '\0' && result_index < result_size - 1; i++) {
-        char char_upper = toupper(ciphertext[i]);
+        char char_upper = tolower(ciphertext[i]);
         
         if (isalpha(char_upper) || char_upper == ' ') {
             result[result_index++] = char_upper;
@@ -418,7 +418,7 @@ int autokey_extend_key(const char *key, const char *plaintext, const char *alpha
     
     // Add plaintext characters (remove spaces and non-alphabetic characters)
     for (size_t i = 0; plaintext[i] != '\0' && result_index < result_size - 1; i++) {
-        char char_upper = toupper(plaintext[i]);
+        char char_upper = tolower(plaintext[i]);
         if (isalpha(char_upper) && strchr(alphabet, char_upper)) {
             result[result_index++] = char_upper;
         }
@@ -443,7 +443,7 @@ int autokey_extend_key_for_decryption(const char *key, const char *decrypted_so_
     
     // Add decrypted characters (remove spaces and non-alphabetic characters)
     for (size_t i = 0; decrypted_so_far[i] != '\0' && result_index < result_size - 1; i++) {
-        char char_upper = toupper(decrypted_so_far[i]);
+        char char_upper = tolower(decrypted_so_far[i]);
         if (isalpha(char_upper) && strchr(alphabet, char_upper)) {
             result[result_index++] = char_upper;
         }

@@ -12,6 +12,7 @@ import random
 import string
 from typing import Optional, Tuple, Dict
 
+import cryptology.alphabets as ALPHABETS
 from ..polygraphic.monoalphabetic_squares import create_monoalphabetic_square
 
 
@@ -20,10 +21,10 @@ ADFGVX_LETTERS = "ADFGVX"
 ADFGVZX_LETTERS = "ADFGVZX"  # Extension with additional Z letter
 
 # Standard 6x6 square for ADFGVX/ADFGVZX (A-Z + 0-9)
-DEFAULT_ADFGVX_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+DEFAULT_ADFGVX_ALPHABET = ALPHABETS.ENGLISH_WITH_DIGITS
 
 # Turkish alphabet for ADFGVX (29 letters + 7 digits = 36 characters for 6x6)
-TURKISH_ADFGVX_ALPHABET = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ0123456"
+TURKISH_ADFGVX_ALPHABET = ALPHABETS.TURKISH_WITH_DIGITS
 
 
 def adfgvx_encrypt(
@@ -55,7 +56,7 @@ def adfgvx_encrypt(
         use_alphabet = TURKISH_ADFGVX_ALPHABET
     
     # Clean plaintext
-    plaintext = plaintext.upper().replace(' ', '')
+    plaintext = plaintext.lower().replace(' ', '')
     
     # Handle Turkish-specific letter combinations/reductions if needed
     if alphabet and alphabet.lower() == "turkish":
@@ -152,7 +153,7 @@ def adfgvx_produce_square(
         else:
             alphabet = DEFAULT_ADFGVX_ALPHABET
     
-    alphabet_upper = alphabet.upper()
+    alphabet_upper = alphabet.lower()
     
     if square_type == "standard":
         return _create_standard_adfgvx_square(alphabet_upper)
@@ -181,7 +182,7 @@ def adfgvx_produce_square(
 
 def _create_standard_adfgvx_square(alphabet: str = DEFAULT_ADFGVX_ALPHABET) -> str:
     """Create a standard alphabetical 6×6 square."""
-    alphabet_upper = alphabet.upper()
+    alphabet_upper = alphabet.lower()
     
     # Take first 36 characters
     square_letters = alphabet_upper[:36]
@@ -202,7 +203,7 @@ def _create_standard_adfgvx_square(alphabet: str = DEFAULT_ADFGVX_ALPHABET) -> s
 
 def _create_frequency_adfgvx_square(alphabet: str = DEFAULT_ADFGVX_ALPHABET) -> str:
     """Create a frequency-based 6×6 square."""
-    alphabet_upper = alphabet.upper()
+    alphabet_upper = alphabet.lower()
     
     # English frequency order (A-Z, 0-9)
     frequency_order = "ETAOINSHRDLCUMWFGYPBVKXJQZ0123456789"
@@ -237,8 +238,8 @@ def _create_frequency_adfgvx_square(alphabet: str = DEFAULT_ADFGVX_ALPHABET) -> 
 
 def _create_keyword_adfgvx_square(keyword: str, alphabet: str = DEFAULT_ADFGVX_ALPHABET) -> str:
     """Create a keyword-based 6×6 square."""
-    alphabet_upper = alphabet.upper()
-    keyword_upper = keyword.upper()
+    alphabet_upper = alphabet.lower()
+    keyword_upper = keyword.lower()
     
     # Remove duplicates from keyword
     keyword_unique = ""
@@ -280,8 +281,8 @@ def _substitute_to_adfgvx(text: str, square: str) -> str:
     # Convert to ADFGVX pairs
     pairs = []
     for char in text:
-        if char.upper() in square_dict:
-            row_col = square_dict[char.upper()]
+        if char.lower() in square_dict:
+            row_col = square_dict[char.lower()]
             row_char = ADFGVX_LETTERS[row_col[0]]
             col_char = ADFGVX_LETTERS[row_col[1]]
             pairs.append(row_char + col_char)
@@ -352,7 +353,7 @@ def _columnar_transposition(text: str, key: str, encrypt: bool = True) -> str:
     if not text or not key:
         raise ValueError("Text and key cannot be empty")
     
-    key_upper = key.upper()
+    key_upper = key.lower()
     text_len = len(text)
     
     # Get key order (indices sorted by key letters)

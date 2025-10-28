@@ -10,73 +10,131 @@ It works by:
 This 3D fractionation technique provides even more security than Bifid.
 """
 
-from typing import List, Tuple
+from typing import List, Tuple, Optional, Dict, Any
+import cryptology.alphabets as ALPHABETS
 from ..polygraphic.alphabet_utils import combine_similar_letters, get_square_size, create_square_alphabet
+from ..polygraphic.monoalphabetic_squares import create_monoalphabetic_square
 
-DEFAULT_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET
 
 
-def _create_trifid_cube(key: str, alphabet: str = DEFAULT_ALPHABET) -> List[List[List[str]]]:
+def _create_trifid_cube(
+    key: str, 
+    alphabet: str = DEFAULT_ALPHABET,
+    square_type: str = "standard",
+    mono_params: Optional[Dict[str, Any]] = None
+) -> List[List[List[str]]]:
     """
-    Create a 3x3x3 Trifid cube from the key and alphabet.
+    Create a Trifid cube from the key and alphabet.
     
     Args:
         key: The keyword to use for the cube
         alphabet: The alphabet to use (default: English)
+        square_type: Type of square ("standard", "caesar", "atbash", "affine", "keyword")
+        mono_params: Parameters for monoalphabetic-based squares
         
     Returns:
-        A 3x3x3 cube as a list of lists of lists
+        A cube as a list of lists of lists
     """
-    # Handle custom alphabets
-    if alphabet != DEFAULT_ALPHABET:
-        # Combine similar letters for non-English alphabets
-        processed_alphabet = combine_similar_letters(alphabet)
+    # Determine target cube size (3x3x3 or 3x3x4) based on alphabet length
+    def compute_dims(target_len: int) -> Tuple[int, int, int]:
+        # Layers and rows fixed at 3; columns vary
+        layers = 3
+        rows = 3
+        cols = (target_len + (layers * rows) - 1) // (layers * rows)
+        # Clamp to at least 3
+        if cols < 3:
+            cols = 3
+        return layers, rows, cols
+
+    # Handle monoalphabetic-based square generation
+    if square_type in ["caesar", "atbash", "affine", "keyword"]:
+        # Use shared monoalphabetic square generation
+        if mono_params is None:
+            mono_params = {}
+            if square_type == "caesar":
+                mono_params["shift"] = 3  # Default Caesar shift
+            elif square_type == "affine":
+                mono_params = {"a": 5, "b": 8}  # Default Affine params
         
-        # For Trifid, we need exactly 27 characters (3x3x3)
-        if len(processed_alphabet) > 27:
-            # Take first 27 characters
-            processed_alphabet = processed_alphabet[:27]
-        elif len(processed_alphabet) < 27:
-            # Pad with X
-            processed_alphabet = processed_alphabet.ljust(27, 'X')
+        # Create square string (can be 5x5 or 6x6)
+        square_string = create_monoalphabetic_square(square_type, alphabet, mono_params)
+        
+        # Extract characters for Trifid cube
+        # Convert multiline string to single line
+        square_chars = "".join(square_string.split()).lower()
+        # Decide target length: 27 or 36
+        target_len = 27 if len(square_chars) <= 27 else 36
+        square_chars = square_chars[:target_len].ljust(target_len, 'x')
+        L, R, C = compute_dims(target_len)
+        # Create cube from transformed alphabet
+        cube = []
+        index = 0
+        for layer in range(L):
+            cube_layer = []
+            for row in range(R):
+                cube_row = []
+                for col in range(C):
+                    if index < len(square_chars):
+                        cube_row.append(square_chars[index])
+                    else:
+                        cube_row.append('x')
+                    index += 1
+                cube_layer.append(cube_row)
+            cube.append(cube_layer)
+        return cube
+    
+    # Handle custom alphabets (standard cube creation)
+    if alphabet != DEFAULT_ALPHABET:
+        # Preserve all characters for non-English alphabets
+        processed_alphabet = alphabet
+        # Choose 27 or 36 target size
+        target_len = 27 if len(processed_alphabet) <= 27 else 36
+        if len(processed_alphabet) > target_len:
+            processed_alphabet = processed_alphabet[:target_len]
+        elif len(processed_alphabet) < target_len:
+            processed_alphabet = processed_alphabet.ljust(target_len, 'x')
     else:
         # Standard English alphabet (I and J combined, 26 letters + 1 padding)
-        processed_alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"  # 25 letters
-        processed_alphabet = processed_alphabet.ljust(27, 'X')  # Pad to 27
+        processed_alphabet = "abcdefghiklmnopqrstuvwxyz"  # 25 letters (no j)
+        processed_alphabet = processed_alphabet.ljust(27, 'x')  # Pad to 27
     
-    # Remove duplicates while preserving order, convert to uppercase
+    # Remove duplicates while preserving order, keep lowercase
     key_clean = ""
     seen = set()
     
-    for char in key.upper():
+    for char in key.lower():
         if char.isalpha() and char not in seen:
             key_clean += char
             seen.add(char)
     
     # Add remaining letters from processed alphabet
-    for char in processed_alphabet.upper():
+    for char in processed_alphabet.lower():
         if char not in seen:
             key_clean += char
             seen.add(char)
     
-    # Ensure we have exactly 27 characters
-    if len(key_clean) > 27:
-        key_clean = key_clean[:27]
-    elif len(key_clean) < 27:
-        key_clean = key_clean.ljust(27, 'X')
+    # Ensure we have target characters (27/36)
+    target_len = 27 if len(processed_alphabet) <= 27 else 36
+    if len(key_clean) > target_len:
+        key_clean = key_clean[:target_len]
+    elif len(key_clean) < target_len:
+        key_clean = key_clean.ljust(target_len, 'x')
     
-    # Create 3x3x3 cube
+    # Create cube with computed dims
+    L, R, C = compute_dims(target_len)
     cube = []
-    for layer in range(3):
+    index = 0
+    for layer in range(L):
         cube_layer = []
-        for row in range(3):
+        for row in range(R):
             cube_row = []
-            for col in range(3):
-                index = layer * 9 + row * 3 + col
+            for col in range(C):
                 if index < len(key_clean):
                     cube_row.append(key_clean[index])
                 else:
-                    cube_row.append('X')  # Padding
+                    cube_row.append('x')
+                index += 1
             cube_layer.append(cube_row)
         cube.append(cube_layer)
     
@@ -94,15 +152,14 @@ def _find_position(cube: List[List[List[str]]], char: str) -> Tuple[int, int, in
     Returns:
         A tuple of (layer, row, column) coordinates
     """
-    char = char.upper()
+    char = char.lower()
     
-    # Handle I/J combination for English
-    if char == 'J':
-        char = 'I'
-    
-    for layer in range(3):
-        for row in range(3):
-            for col in range(3):
+    L = len(cube)
+    R = len(cube[0])
+    C = len(cube[0][0])
+    for layer in range(L):
+        for row in range(R):
+            for col in range(C):
                 if cube[layer][row][col] == char:
                     return layer, row, col
     
@@ -122,36 +179,24 @@ def _prepare_text(text: str, alphabet: str = DEFAULT_ALPHABET) -> str:
     """
     # Clean the text
     text_clean = ""
-    for char in text.upper():
-        if char.isalpha():
-            # Handle custom alphabets
-            if alphabet != DEFAULT_ALPHABET:
-                # Apply language-specific replacements
-                if 'ç' in alphabet.lower() or 'Ç' in alphabet:
-                    # Turkish character replacements
-                    if char == 'Ç':
-                        char = 'C'
-                    elif char == 'Ğ':
-                        char = 'G'
-                    elif char == 'I':
-                        char = 'I'
-                    elif char == 'Ö':
-                        char = 'O'
-                    elif char == 'Ş':
-                        char = 'S'
-                    elif char == 'Ü':
-                        char = 'U'
-            else:
-                # Standard English: Replace J with I
-                if char == 'J':
-                    char = 'I'
-            
+    for char in text.lower():
+        # Keep letters and digits for ciphertext robustness
+        if char.isalpha() or char.isdigit():
+            # English: replace j with i on letters only
+            if alphabet == DEFAULT_ALPHABET and char == 'j':
+                char = 'i'
             text_clean += char
     
     return text_clean
 
 
-def encrypt(plaintext: str, key: str, alphabet: str = DEFAULT_ALPHABET) -> str:
+def encrypt(
+    plaintext: str, 
+    key: str, 
+    alphabet: str = DEFAULT_ALPHABET,
+    square_type: str = "standard",
+    mono_params: Optional[Dict[str, Any]] = None
+) -> str:
     """
     Encrypt plaintext using the Trifid cipher.
     
@@ -167,7 +212,7 @@ def encrypt(plaintext: str, key: str, alphabet: str = DEFAULT_ALPHABET) -> str:
         return ""
     
     # Create the Trifid cube
-    cube = _create_trifid_cube(key, alphabet)
+    cube = _create_trifid_cube(key, alphabet, square_type, mono_params)
     
     # Prepare the text
     text_clean = _prepare_text(plaintext, alphabet)
@@ -175,41 +220,48 @@ def encrypt(plaintext: str, key: str, alphabet: str = DEFAULT_ALPHABET) -> str:
     if not text_clean:
         return ""
     
-    # Convert each letter to coordinates
-    layers = []
-    rows = []
-    cols = []
     
-    for char in text_clean:
-        try:
-            layer, row, col = _find_position(cube, char)
-            layers.append(layer)
-            rows.append(row)
-            cols.append(col)
-        except ValueError:
-            # Skip characters not in the cube
-            continue
+    # Block-wise processing with period
+    period = 5
+    L = len(cube)
+    R = len(cube[0])
+    C = len(cube[0][0])
     
-    if not layers:
-        return ""
-    
-    # Fractionation: write all layers, then all rows, then all columns
-    fractionated = layers + rows + cols
-    
-    # Read triplets of coordinates to get new letters
     result = ""
-    for i in range(0, len(fractionated), 3):
-        if i + 2 < len(fractionated):
-            layer = fractionated[i]
-            row = fractionated[i + 1]
-            col = fractionated[i + 2]
-            if layer < 3 and row < 3 and col < 3:
+    for start in range(0, len(text_clean), period):
+        block = text_clean[start:start + period]
+        # Convert each letter to coordinates
+        layers: List[int] = []
+        rows: List[int] = []
+        cols: List[int] = []
+        for char in block:
+            try:
+                layer, row, col = _find_position(cube, char)
+                layers.append(layer)
+                rows.append(row)
+                cols.append(col)
+            except ValueError:
+                continue
+        if not layers:
+            continue
+        # Fractionation: write all layers, then rows, then cols (within block)
+        # Produce ciphertext by pairing corresponding indices
+        for i in range(len(layers)):
+            layer = layers[i]
+            row = rows[i]
+            col = cols[i]
+            if layer < L and row < R and col < C:
                 result += cube[layer][row][col]
-    
     return result
 
 
-def decrypt(ciphertext: str, key: str, alphabet: str = DEFAULT_ALPHABET) -> str:
+def decrypt(
+    ciphertext: str, 
+    key: str, 
+    alphabet: str = DEFAULT_ALPHABET,
+    square_type: str = "standard",
+    mono_params: Optional[Dict[str, Any]] = None
+) -> str:
     """
     Decrypt ciphertext using the Trifid cipher.
     
@@ -225,7 +277,7 @@ def decrypt(ciphertext: str, key: str, alphabet: str = DEFAULT_ALPHABET) -> str:
         return ""
     
     # Create the Trifid cube
-    cube = _create_trifid_cube(key, alphabet)
+    cube = _create_trifid_cube(key, alphabet, square_type, mono_params)
     
     # Prepare the text
     text_clean = _prepare_text(ciphertext, alphabet)
@@ -233,32 +285,34 @@ def decrypt(ciphertext: str, key: str, alphabet: str = DEFAULT_ALPHABET) -> str:
     if not text_clean:
         return ""
     
-    # Convert each letter to coordinates
-    coords = []
-    for char in text_clean:
-        try:
-            layer, row, col = _find_position(cube, char)
-            coords.append((layer, row, col))
-        except ValueError:
-            # Skip characters not in the cube
-            continue
     
-    if not coords:
-        return ""
+    # Block-wise processing with period
+    period = 5
+    L = len(cube)
+    R = len(cube[0])
+    C = len(cube[0][0])
     
-    # Defractionation: separate layers, rows, and columns
-    layers = [coord[0] for coord in coords]
-    rows = [coord[1] for coord in coords]
-    cols = [coord[2] for coord in coords]
-    
-    # Interleave layers, rows, and columns
     result = ""
-    for i in range(len(layers)):
-        if i < len(layers) and i < len(rows) and i < len(cols):
-            layer = layers[i]
-            row = rows[i]
-            col = cols[i]
-            if layer < 3 and row < 3 and col < 3:
+    for start in range(0, len(text_clean), period):
+        block = text_clean[start:start + period]
+        # Convert each letter to coordinates for the block
+        coords: List[Tuple[int, int, int]] = []
+        for char in block:
+            try:
+                layer, row, col = _find_position(cube, char)
+                coords.append((layer, row, col))
+            except ValueError:
+                continue
+        if not coords:
+            continue
+        # Defractionation for the block: rebuild original index-wise
+        layers_digits = [c[0] for c in coords]
+        rows_digits = [c[1] for c in coords]
+        cols_digits = [c[2] for c in coords]
+        for i in range(len(coords)):
+            layer = layers_digits[i]
+            row = rows_digits[i]
+            col = cols_digits[i]
+            if layer < L and row < R and col < C:
                 result += cube[layer][row][col]
-    
     return result

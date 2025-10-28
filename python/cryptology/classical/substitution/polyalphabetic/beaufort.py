@@ -21,8 +21,10 @@ from ..monoalphabetic.keyword import produce_alphabet as keyword_produce
 from ..monoalphabetic.affine import produce_alphabet as affine_produce
 from ..monoalphabetic.atbash import produce_alphabet as atbash_produce
 
-DEFAULT_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-TURKISH_ALPHABET = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
+import cryptology.alphabets as ALPHABETS
+
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET
+TURKISH_ALPHABET = ALPHABETS.TURKISH_STANDARD
 
 
 def generate_random_key(length: int, alphabet: str = DEFAULT_ALPHABET) -> str:
@@ -65,7 +67,7 @@ def generate_key_for_text(plaintext: str, alphabet: str = DEFAULT_ALPHABET) -> s
         return ""
     
     # Count only alphabetic characters (spaces are preserved in encryption)
-    alphabetic_chars = sum(1 for c in plaintext.upper() if c.isalpha())
+    alphabetic_chars = sum(1 for c in plaintext.lower() if c.isalpha())
     return generate_random_key(alphabetic_chars, alphabet)
 
 
@@ -284,7 +286,7 @@ def _prepare_text(text: str, alphabet: str) -> str:
         Cleaned text ready for encryption
     """
     text_clean = ""
-    for char in text.upper():
+    for char in text.lower():
         if char.isalpha():
             # Handle custom alphabets
             if alphabet == DEFAULT_ALPHABET:
@@ -320,13 +322,13 @@ def _prepare_ciphertext(ciphertext: str) -> str:
         Cleaned ciphertext ready for decryption
     """
     text_clean = ""
-    for char in ciphertext.upper():
+    for char in ciphertext.lower():
         if char.isalpha() or char == ' ':
             text_clean += char
     return text_clean
 
 
-def encrypt(plaintext: str, key: str, table: Optional[List[List[str]]] = None, alphabet: str = DEFAULT_ALPHABET) -> str:
+def encrypt(plaintext: str, key: str, alphabet: str = DEFAULT_ALPHABET, table: Optional[List[List[str]]] = None) -> str:
     """
     Encrypt plaintext using Beaufort cipher.
     
@@ -372,7 +374,7 @@ def encrypt(plaintext: str, key: str, table: Optional[List[List[str]]] = None, a
     return result
 
 
-def decrypt(ciphertext: str, key: str, table: Optional[List[List[str]]] = None, alphabet: str = DEFAULT_ALPHABET) -> str:
+def decrypt(ciphertext: str, key: str, alphabet: str = DEFAULT_ALPHABET, table: Optional[List[List[str]]] = None) -> str:
     """
     Decrypt ciphertext using Beaufort cipher.
     
@@ -389,4 +391,4 @@ def decrypt(ciphertext: str, key: str, table: Optional[List[List[str]]] = None, 
         Decrypted plaintext
     """
     # Beaufort is self-reciprocal: decryption is the same as encryption
-    return encrypt(ciphertext, key, table, alphabet)
+    return encrypt(ciphertext, key, alphabet, table)

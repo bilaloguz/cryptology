@@ -12,6 +12,7 @@ import string
 import random
 from typing import Optional, Tuple, Dict
 
+import cryptology.alphabets as ALPHABETS
 from ..polygraphic.monoalphabetic_squares import create_monoalphabetic_square
 
 
@@ -210,7 +211,7 @@ def nihilist_encrypt_with_random_key(
 
 def _prepare_text(text: str) -> str:
     """Prepare text for processing."""
-    return ''.join(c.upper() for c in text if c.isalpha())
+    return ''.join(c.lower() for c in text if c.isalpha())
 
 
 def _prepare_key(key: str, key_type: str) -> str:
@@ -218,7 +219,7 @@ def _prepare_key(key: str, key_type: str) -> str:
     if key_type == "numeric":
         return ''.join(c for c in key if c.isdigit())
     elif key_type == "alphabetic":
-        return ''.join(c.upper() for c in key if c.isalpha())
+        return ''.join(c.lower() for c in key if c.isalpha())
     else:
         raise ValueError(f"Invalid key_type: {key_type}")
 
@@ -324,12 +325,12 @@ def _get_square_size(square: str) -> int:
 
 def _create_standard_square(alphabet: str) -> str:
     """Create a standard alphabetical square."""
-    alphabet_upper = alphabet.upper()
+    alphabet_upper = alphabet.lower()
     
     # Handle I=J combination for English
-    if alphabet_upper == "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+    if alphabet_upper == ALPHABETS.ENGLISH_ALPHABET.lower():
         # Remove J, use I for both I and J
-        alphabet_upper = "ABCDEFGHIKLMNOPQRSTUVWXYZ"
+        alphabet_upper = "abcdefghiklmnopqrstuvwxyz"
     
     # Determine square size
     if len(alphabet_upper) <= 25:
@@ -353,13 +354,13 @@ def _create_standard_square(alphabet: str) -> str:
 
 def _create_frequency_square(alphabet: str) -> str:
     """Create a frequency-based square."""
-    alphabet_upper = alphabet.upper()
+    alphabet_upper = alphabet.lower()
     
     # Define frequency orders
-    if alphabet_upper == "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+    if alphabet_upper == ALPHABETS.ENGLISH_ALPHABET.lower():
         # English frequency order (25 letters for 5x5 square)
         frequency_order = "ETAOINSHRDLCUMWFGYPBVKXQZ"
-    elif alphabet_upper == "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ":
+    elif alphabet_upper == ALPHABETS.TURKISH_STANDARD.lower():
         # Turkish frequency order (29 letters for 6x6 square)
         frequency_order = "AENRLDKMSUTOYBGHCÇPFVZŞĞÖÜJIİ"
     else:
@@ -367,13 +368,13 @@ def _create_frequency_square(alphabet: str) -> str:
         frequency_order = alphabet_upper
     
     # Handle I=J combination for English
-    if alphabet_upper == "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+    if alphabet_upper == "abcdefghijklmnopqrstuvwxyz":
         frequency_order = frequency_order.replace('J', 'I')
     
     # Determine square size based on alphabet
-    if alphabet_upper == "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+    if alphabet_upper == ALPHABETS.ENGLISH_ALPHABET.lower():
         size = 5  # English uses 5x5 (25 letters with I=J)
-    elif alphabet_upper == "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ":
+    elif alphabet_upper == ALPHABETS.TURKISH_STANDARD.lower():
         size = 6  # Turkish uses 6x6 (29 letters)
     else:
         # For other alphabets, determine size based on length
@@ -398,8 +399,8 @@ def _create_frequency_square(alphabet: str) -> str:
 
 def _create_keyword_square(keyword: str, alphabet: str) -> str:
     """Create a keyword-based square."""
-    alphabet_upper = alphabet.upper()
-    keyword_upper = keyword.upper()
+    alphabet_upper = alphabet.lower()
+    keyword_upper = keyword.lower()
     
     # Remove duplicates from keyword while preserving order
     seen = set()
@@ -419,13 +420,13 @@ def _create_keyword_square(keyword: str, alphabet: str) -> str:
     square_alphabet = keyword_unique + remaining
     
     # Handle I=J combination for English
-    if alphabet_upper == "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+    if alphabet_upper == "abcdefghijklmnopqrstuvwxyz":
         square_alphabet = square_alphabet.replace('J', 'I')
     
     # Determine square size based on alphabet
-    if alphabet_upper == "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+    if alphabet_upper == ALPHABETS.ENGLISH_ALPHABET.lower():
         size = 5  # English uses 5x5 (25 letters with I=J)
-    elif alphabet_upper == "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ":
+    elif alphabet_upper == ALPHABETS.TURKISH_STANDARD.lower():
         size = 6  # Turkish uses 6x6 (29 letters)
     else:
         # For other alphabets, determine size based on length

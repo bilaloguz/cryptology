@@ -13,7 +13,7 @@
 
 #define MAX_KEY_SIZE 256
 #define MAX_SQUARE_SIZE 10
-#define DEFAULT_ALPHABET "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define DEFAULT_ALPHABET "abcdefghijklmnopqrstuvwxyz"
 
 static int find_char_in_square(char square[MAX_SQUARE_SIZE][MAX_SQUARE_SIZE], int square_size, char c, int *row, int *col) {
     for (int i = 0; i < square_size; i++) {
@@ -56,7 +56,7 @@ static int create_key_square(const char *key, const char *alphabet, char square[
     } else {
         // Standard English alphabet (I and J combined)
         *square_size = 5;
-        strcpy(processed_alphabet, "ABCDEFGHIKLMNOPQRSTUVWXYZ");  // No J, I and J are combined
+        strcpy(processed_alphabet, "abcdefghiklmnopqrstuvwxyz");  // No J, I and J are combined
     }
     
     // Remove duplicates while preserving order, convert to uppercase
@@ -65,7 +65,7 @@ static int create_key_square(const char *key, const char *alphabet, char square[
     int pos = 0;
     
     for (size_t i = 0; key[i] != '\0' && pos < MAX_KEY_SIZE - 1; i++) {
-        char c = toupper((unsigned char)key[i]);
+        char c = tolower((unsigned char)key[i]);
         if (c >= 'A' && c <= 'Z' && !seen[(unsigned char)c]) {
             key_clean[pos++] = c;
             seen[(unsigned char)c] = true;
@@ -75,7 +75,7 @@ static int create_key_square(const char *key, const char *alphabet, char square[
     
     // Add remaining letters from processed alphabet
     for (size_t i = 0; processed_alphabet[i] != '\0' && pos < MAX_KEY_SIZE - 1; i++) {
-        char c = toupper((unsigned char)processed_alphabet[i]);
+        char c = tolower((unsigned char)processed_alphabet[i]);
         if (!seen[(unsigned char)c]) {
             key_clean[pos++] = c;
             seen[(unsigned char)c] = true;
@@ -107,7 +107,7 @@ static int prepare_text(const char *input, const char *alphabet, char *output, s
     size_t output_pos = 0;
     
     for (size_t i = 0; i < input_len && output_pos < output_size - 1; i++) {
-        char c = toupper((unsigned char)input[i]);
+        char c = tolower((unsigned char)input[i]);
         if (c >= 'A' && c <= 'Z') {
             // Handle custom alphabets
             if (strcmp(alphabet, DEFAULT_ALPHABET) != 0) {

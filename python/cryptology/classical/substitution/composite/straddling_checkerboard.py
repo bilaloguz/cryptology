@@ -42,7 +42,7 @@ def straddling_checkerboard_encrypt(
         checkerboard = _create_standard_checkerboard()
     
     # Prepare text
-    text = plaintext.upper().replace(" ", "")
+    text = plaintext.lower().replace(" ", "")
     
     # Step 1: Convert letters to digits using checkerboard
     digits = _letters_to_digits(text, checkerboard)
@@ -86,7 +86,7 @@ def straddling_checkerboard_decrypt(
         checkerboard = _create_standard_checkerboard()
     
     # Prepare text
-    text = ciphertext.upper().replace(" ", "")
+    text = ciphertext.lower().replace(" ", "")
     
     # Step 1: Convert letters to digits using checkerboard
     digits = _letters_to_digits(text, checkerboard)
@@ -248,8 +248,8 @@ def _create_standard_checkerboard() -> str:
 
 def _create_keyword_checkerboard(keyword: str, alphabet: str) -> str:
     """Create a keyword-based checkerboard."""
-    keyword_upper = keyword.upper()
-    alphabet_upper = alphabet.upper()
+    keyword_upper = keyword.lower()
+    alphabet_upper = alphabet.lower()
     
     # Remove duplicates from keyword while preserving order
     keyword_chars = []
@@ -291,7 +291,7 @@ def _create_keyword_checkerboard(keyword: str, alphabet: str) -> str:
 
 def _create_custom_checkerboard(alphabet: str) -> str:
     """Create a custom checkerboard for the given alphabet."""
-    alphabet_upper = alphabet.upper()
+    alphabet_upper = alphabet.lower()
     
     checkerboard = {}
     
@@ -321,10 +321,10 @@ def _create_custom_checkerboard(alphabet: str) -> str:
 
 def _create_frequency_checkerboard(alphabet: str) -> str:
     """Create a frequency-based checkerboard for the given alphabet."""
-    alphabet_upper = alphabet.upper()
+    alphabet_upper = alphabet.lower()
     
     # Define frequency-based letter orders for English and Turkish
-    if alphabet_upper == "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+    if alphabet_upper == "abcdefghijklmnopqrstuvwxyz":
         # English frequency order (most to least frequent)
         frequency_order = "ETAOINSHRDLCUMWFGYPBVKJXQZ"
     elif alphabet_upper == "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ":
@@ -362,10 +362,10 @@ def _create_frequency_checkerboard(alphabet: str) -> str:
 
 def _create_vowel_consonant_checkerboard(alphabet: str) -> str:
     """Create a vowel-consonant separation checkerboard."""
-    alphabet_upper = alphabet.upper()
+    alphabet_upper = alphabet.lower()
     
     # Define vowels and consonants
-    if alphabet_upper == "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+    if alphabet_upper == "abcdefghijklmnopqrstuvwxyz":
         vowels = "AEIOU"
         consonants = "BCDFGHJKLMNPQRSTVWXYZ"
     elif alphabet_upper == "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ":
@@ -489,7 +489,7 @@ def _apply_numeric_key(digits: str, key: str, reverse: bool = False) -> str:
 def _apply_alphabetic_key(digits: str, key: str, checkerboard: str, reverse: bool = False) -> str:
     """Apply alphabetic key to digits."""
     checkerboard_dict = _string_to_checkerboard(checkerboard)
-    key_upper = key.upper()
+    key_upper = key.lower()
     
     result_digits = []
     

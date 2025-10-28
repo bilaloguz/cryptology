@@ -22,8 +22,10 @@ from ..monoalphabetic.keyword import produce_alphabet as keyword_produce
 from ..monoalphabetic.affine import produce_alphabet as affine_produce
 from ..monoalphabetic.atbash import produce_alphabet as atbash_produce
 
-DEFAULT_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-TURKISH_ALPHABET = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
+import cryptology.alphabets as ALPHABETS
+
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET
+TURKISH_ALPHABET = ALPHABETS.TURKISH_STANDARD
 
 
 def generate_random_numeric_key(length: int) -> str:
@@ -61,7 +63,7 @@ def generate_numeric_key_for_text(plaintext: str) -> str:
         return ""
     
     # Count only alphabetic characters (spaces are preserved in encryption)
-    alphabetic_chars = sum(1 for c in plaintext.upper() if c.isalpha())
+    alphabetic_chars = sum(1 for c in plaintext.lower() if c.isalpha())
     return generate_random_numeric_key(alphabetic_chars)
 
 
@@ -319,7 +321,7 @@ def _find_char_position(alphabet: str, char: str) -> int:
     Raises:
         ValueError: If character not found
     """
-    char_upper = char.upper()
+    char_upper = char.lower()
     try:
         return alphabet.index(char_upper)
     except ValueError:
@@ -375,7 +377,7 @@ def encrypt(plaintext: str,
     key_index = 0
     
     for char in plaintext:
-        if char.upper() in alphabet:
+        if char.lower() in alphabet:
             # Get the shift value from the numeric key
             shift = int(key[key_index % len(key)])
             
@@ -430,7 +432,7 @@ def decrypt(ciphertext: str,
     key_index = 0
     
     for char in ciphertext:
-        if char.upper() in alphabet:
+        if char.lower() in alphabet:
             # Get the shift value from the numeric key
             shift = int(key[key_index % len(key)])
             

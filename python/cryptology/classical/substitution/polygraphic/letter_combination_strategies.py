@@ -28,76 +28,40 @@ class LetterCombinationEngine:
     def _initialize_language_rules(self) -> Dict[str, Dict[str, str]]:
         """Initialize language-specific combination rules."""
         return {
+            "english": {
+                "combinations": {
+                    'j': 'i', 'J': 'I'  # I=J combination for 5x5 squares
+                },
+                "priority": "preserve_base",
+                "target_size": 25  # For 5x5 square
+            },
             "turkish": {
                 "combinations": {
                     'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
-                    'Ç': 'C', 'Ğ': 'G', 'İ': 'I', 'Ö': 'O', 'Ş': 'S', 'Ü': 'U'
+                    'Ç': 'C', 'Ğ': 'G', 'İ': 'I', 'Ö': 'O', 'Ş': 'S', 'Ü': 'U',
+                    'j': 'i', 'J': 'I'  # I=J combination like English
                 },
-                "priority": "preserve_base",  # Keep base letters
+                "priority": "preserve_base",
                 "target_size": 25  # For 5x5 square
-            },
-            "russian": {
-                "combinations": {
-                    'ё': 'е', 'й': 'и', 'ъ': '', 'ь': '',
-                    'Ё': 'Е', 'Й': 'И', 'Ъ': '', 'Ь': ''
-                },
-                "priority": "preserve_base",
-                "target_size": 25
-            },
-            "german": {
-                "combinations": {
-                    'ä': 'a', 'ö': 'o', 'ü': 'u', 'ß': 's',
-                    'Ä': 'A', 'Ö': 'O', 'Ü': 'U'
-                },
-                "priority": "preserve_base",
-                "target_size": 25
-            },
-            "spanish": {
-                "combinations": {
-                    'ñ': 'n', 'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
-                    'Ñ': 'N', 'Á': 'A', 'É': 'E', 'Í': 'I', 'Ó': 'O', 'Ú': 'U'
-                },
-                "priority": "preserve_base",
-                "target_size": 25
-            },
-            "french": {
-                "combinations": {
-                    'à': 'a', 'â': 'a', 'ä': 'a', 'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e',
-                    'î': 'i', 'ï': 'i', 'ô': 'o', 'ö': 'o', 'ù': 'u', 'û': 'u', 'ü': 'u', 'ÿ': 'y',
-                    'ç': 'c', 'À': 'A', 'Â': 'A', 'Ä': 'A', 'É': 'E', 'È': 'E', 'Ê': 'E', 'Ë': 'E',
-                    'Î': 'I', 'Ï': 'I', 'Ô': 'O', 'Ö': 'O', 'Ù': 'U', 'Û': 'U', 'Ü': 'U', 'Ÿ': 'Y',
-                    'Ç': 'C'
-                },
-                "priority": "preserve_base",
-                "target_size": 25
-            },
-            "italian": {
-                "combinations": {
-                    'à': 'a', 'è': 'e', 'é': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u',
-                    'À': 'A', 'È': 'E', 'É': 'E', 'Ì': 'I', 'Ò': 'O', 'Ù': 'U'
-                },
-                "priority": "preserve_base",
-                "target_size": 25
             }
         }
     
     def _initialize_frequency_data(self) -> Dict[str, Dict[str, float]]:
         """Initialize letter frequency data for smart combination."""
         return {
+            "english": {
+                'e': 12.70, 't': 9.06, 'a': 8.17, 'o': 7.51, 'i': 6.97, 'n': 6.75,
+                's': 6.33, 'h': 6.09, 'r': 5.99, 'd': 4.25, 'l': 4.03, 'c': 2.78,
+                'u': 2.76, 'm': 2.41, 'w': 2.36, 'f': 2.23, 'g': 2.02, 'y': 1.97,
+                'p': 1.93, 'b': 1.29, 'v': 0.98, 'k': 0.77, 'j': 0.15, 'x': 0.15,
+                'q': 0.10, 'z': 0.07
+            },
             "turkish": {
                 'a': 11.92, 'e': 8.91, 'i': 8.60, 'r': 7.36, 'n': 7.23, 'l': 6.06,
                 'd': 4.98, 'k': 4.83, 'ı': 4.82, 'y': 3.33, 's': 2.95, 'b': 2.84,
                 'z': 1.48, 'ç': 1.15, 'g': 1.13, 'ğ': 1.12, 'ş': 0.88, 'ö': 0.78,
                 'ü': 0.68, 'c': 0.60, 'f': 0.44, 'h': 0.35, 'j': 0.01, 'p': 0.01,
                 'q': 0.01, 'v': 0.01, 'w': 0.01, 'x': 0.01
-            },
-            "russian": {
-                'о': 10.97, 'а': 8.33, 'е': 8.09, 'и': 7.35, 'н': 6.70, 'т': 6.26,
-                'с': 5.47, 'р': 4.73, 'в': 4.54, 'л': 4.40, 'к': 3.49, 'м': 3.21,
-                'д': 2.98, 'п': 2.81, 'у': 2.62, 'я': 2.01, 'ы': 1.90, 'ь': 1.74,
-                'г': 1.70, 'з': 1.65, 'б': 1.59, 'ч': 1.44, 'й': 1.21, 'х': 0.97,
-                'ж': 0.94, 'ш': 0.73, 'ю': 0.64, 'ц': 0.39, 'щ': 0.36, 'э': 0.33,
-                'ф': 0.26, 'ъ': 0.04, 'ё': 0.04
             }
         }
     
@@ -105,18 +69,14 @@ class LetterCombinationEngine:
         """Detect the language of an alphabet with improved accuracy."""
         alphabet_lower = alphabet.lower()
         
-        # Check for specific language indicators
+        # Check for specific language indicators - ENGLISH and TURKISH ONLY
         language_indicators = {
             "turkish": ['ç', 'ğ', 'ı', 'ö', 'ş', 'ü'],
-            "russian": ['ё', 'й', 'ъ', 'ь', 'ы', 'э', 'ю', 'я'],
-            "german": ['ä', 'ö', 'ü', 'ß'],
-            "spanish": ['ñ', 'á', 'é', 'í', 'ó', 'ú'],
-            "french": ['à', 'â', 'ä', 'é', 'è', 'ê', 'ë', 'î', 'ï', 'ô', 'ö', 'ù', 'û', 'ü', 'ÿ', 'ç'],
-            "italian": ['à', 'è', 'é', 'ì', 'ò', 'ù']
+            "english": []  # English has no special characters
         }
         
         for language, indicators in language_indicators.items():
-            if any(char in alphabet_lower for char in indicators):
+            if indicators and any(char in alphabet_lower for char in indicators):
                 return language
         
         # Check alphabet length and common patterns

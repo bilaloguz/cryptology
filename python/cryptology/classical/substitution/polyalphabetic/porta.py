@@ -18,8 +18,10 @@ import secrets
 import re
 from typing import List, Optional, Tuple
 
-DEFAULT_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-TURKISH_ALPHABET = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
+import cryptology.alphabets as ALPHABETS
+
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET
+TURKISH_ALPHABET = ALPHABETS.TURKISH_STANDARD
 
 
 def generate_random_key(length: int, alphabet: str = DEFAULT_ALPHABET) -> str:
@@ -62,7 +64,7 @@ def generate_key_for_text(plaintext: str, alphabet: str = DEFAULT_ALPHABET) -> s
         return ""
     
     # Count only alphabetic characters (spaces are preserved in encryption)
-    alphabetic_chars = sum(1 for c in plaintext.upper() if c.isalpha())
+    alphabetic_chars = sum(1 for c in plaintext.lower() if c.isalpha())
     return generate_random_key(alphabetic_chars, alphabet)
 
 
@@ -278,7 +280,7 @@ def _find_letter_pair(letter: str, pairs: List[Tuple[str, str]]) -> Optional[Tup
     Returns:
         The pair containing the letter, or None if not found
     """
-    letter_upper = letter.upper()
+    letter_upper = letter.lower()
     for pair in pairs:
         if letter_upper in pair:
             return pair
@@ -316,7 +318,7 @@ def _get_pair_index(key_letter: str, alphabet: str) -> int:
         The index of the pair to use
     """
     alphabet_len = len(alphabet)
-    letter_pos = alphabet.find(key_letter.upper())
+    letter_pos = alphabet.find(key_letter.lower())
     
     if alphabet_len == 26:
         # English alphabet: pairs are every 2 letters
@@ -359,7 +361,7 @@ def encrypt(plaintext: str,
     key_index = 0
     
     for char in plaintext:
-        if char.upper() in alphabet:
+        if char.lower() in alphabet:
             # Get the pair index from the key
             pair_index = _get_pair_index(key[key_index % len(key)], alphabet)
             
@@ -368,14 +370,14 @@ def encrypt(plaintext: str,
             
             if letter_pair:
                 # Determine which letter in the pair to use based on key
-                key_letter = key[key_index % len(key)].upper()
+                key_letter = key[key_index % len(key)].lower()
                 key_pos = alphabet.find(key_letter)
                 
                 # Use the pair based on key letter position
                 if key_pos % 2 == 0:  # Even position (A, C, E, etc.)
-                    encrypted_char = letter_pair[1] if char.upper() == letter_pair[0] else letter_pair[0]
+                    encrypted_char = letter_pair[1] if char.lower() == letter_pair[0] else letter_pair[0]
                 else:  # Odd position (B, D, F, etc.)
-                    encrypted_char = letter_pair[0] if char.upper() == letter_pair[0] else letter_pair[1]
+                    encrypted_char = letter_pair[0] if char.lower() == letter_pair[0] else letter_pair[1]
                 
                 # Preserve case
                 if char.islower():

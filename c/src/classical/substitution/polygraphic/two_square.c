@@ -34,7 +34,7 @@ static int create_key_square(const char *key, char square[SQUARE_SIZE][SQUARE_SI
     
     // Add keyword letters (removing duplicates)
     for (size_t i = 0; key[i] != '\0' && pos < 25; i++) {
-        char c = toupper((unsigned char)key[i]);
+        char c = tolower((unsigned char)key[i]);
         if (c >= 'A' && c <= 'Z') {
             int idx = c - 'A';
             if (!seen[idx]) {
@@ -67,7 +67,7 @@ static int prepare_text(const char *input, char *output, size_t output_size) {
     size_t output_pos = 0;
     
     for (size_t i = 0; i < input_len && output_pos < output_size - 1; i++) {
-        char c = toupper((unsigned char)input[i]);
+        char c = tolower((unsigned char)input[i]);
         if (c >= 'A' && c <= 'Z') {
             // Replace J with I
             if (c == 'J') {

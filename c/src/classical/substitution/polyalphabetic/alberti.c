@@ -11,7 +11,7 @@
 
 #define MAX_BUFFER_SIZE 1024
 #define MAX_ALPHABET_SIZE 256
-#define DEFAULT_ALPHABET "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define DEFAULT_ALPHABET "abcdefghijklmnopqrstuvwxyz"
 
 static int generate_scrambled_alphabet(const char *base_alphabet, char *result, size_t result_size) {
     if (!base_alphabet || !result || result_size == 0) {
@@ -68,7 +68,7 @@ static int parse_rotation_strategy(const char *strategy, const char *text, int *
         // Rotate when plaintext is vowel
         const char *vowels = "AEIOU";
         for (size_t i = 0; i < text_len; i++) {
-            if (strchr(vowels, toupper((unsigned char)text[i]))) {
+            if (strchr(vowels, tolower((unsigned char)text[i]))) {
                 (*rotation_points)[*point_count] = (int)i;
                 (*point_count)++;
             }
@@ -87,7 +87,7 @@ static int parse_rotation_strategy(const char *strategy, const char *text, int *
         // Rotate when plaintext is consonant
         const char *vowels = "AEIOU";
         for (size_t i = 0; i < text_len; i++) {
-            char c = toupper((unsigned char)text[i]);
+            char c = tolower((unsigned char)text[i]);
             if (isalpha(c) && !strchr(vowels, c)) {
                 (*rotation_points)[*point_count] = (int)i;
                 (*point_count)++;
@@ -141,9 +141,9 @@ static int find_char_position(const char *alphabet, char c) {
         return -1;
     }
     
-    char c_upper = toupper((unsigned char)c);
+    char c_upper = tolower((unsigned char)c);
     for (size_t i = 0; alphabet[i] != '\0'; i++) {
-        if (toupper((unsigned char)alphabet[i]) == c_upper) {
+        if (tolower((unsigned char)alphabet[i]) == c_upper) {
             return (int)i;
         }
     }
@@ -160,7 +160,7 @@ static int clean_text(const char *input, char *output, size_t output_size) {
     
     for (size_t i = 0; i < input_len && output_pos < output_size - 1; i++) {
         if (isalpha((unsigned char)input[i])) {
-            output[output_pos++] = toupper((unsigned char)input[i]);
+            output[output_pos++] = tolower((unsigned char)input[i]);
         }
     }
     

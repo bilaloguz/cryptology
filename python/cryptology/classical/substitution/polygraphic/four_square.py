@@ -6,29 +6,93 @@ It provides even more security than Two Square by using four different key squar
 """
 
 import re
-from typing import Optional
+from typing import Optional, Dict, Any
+import cryptology.alphabets as ALPHABETS
+from .monoalphabetic_squares import _create_caesar_alphabet, _create_atbash_alphabet, _create_affine_alphabet, _create_keyword_alphabet
+
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET  # Already lowercase
+TURKISH_EXTENDED = ALPHABETS.TURKISH_EXTENDED  # Already lowercase
 
 
-def _create_key_square(key: str) -> list[list[str]]:
+def _create_key_square(
+    key: str,
+    square_type: str = "standard",
+    mono_params: Optional[Dict[str, Any]] = None
+) -> list[list[str]]:
     """
     Create a 5x5 key square from the given keyword.
     
     Args:
         key: The keyword to generate the key square
+        square_type: Type of square ("standard", "caesar", "atbash", "affine", "keyword")
+        mono_params: Parameters for monoalphabetic-based squares
         
     Returns:
         A 5x5 matrix representing the key square
     """
+    alphabet = "abcdefghijklmnopqrstuvwxyz"
+    
+    # Handle monoalphabetic-based square generation
+    if square_type in ["caesar", "atbash", "affine", "keyword"]:
+        # Create the transformed alphabet
+        if square_type == "caesar":
+            transformed_alphabet = _create_caesar_alphabet(alphabet.lower(), mono_params.get("shift", 3) if mono_params else 3)
+        elif square_type == "atbash":
+            transformed_alphabet = _create_atbash_alphabet(alphabet.lower())
+        elif square_type == "affine":
+            transformed_alphabet = _create_affine_alphabet(alphabet.lower(), mono_params.get("a", 5) if mono_params else 5, mono_params.get("b", 8) if mono_params else 8)
+        elif square_type == "keyword":
+            transformed_alphabet = _create_keyword_alphabet(alphabet.lower(), mono_params.get("keyword", "") if mono_params else "")
+        
+        # Handle I=J for Playfair-style ciphers
+        transformed_alphabet = transformed_alphabet.replace('J', 'I')
+        
+        # Build square: key + remaining transformed alphabet
+        key_clean = ""
+        seen = set()
+        for char in key.lower():
+            if char.isalpha() and char not in seen:
+                key_clean += char
+                seen.add(char)
+        
+        # Add remaining letters from transformed alphabet
+        for char in transformed_alphabet:
+            if char not in seen:
+                key_clean += char
+                seen.add(char)
+                if len(key_clean) >= 25:
+                    break
+        
+        # Ensure we have exactly 25 characters
+        if len(key_clean) < 25:
+            for char in alphabet.replace('J', 'I'):
+                if char not in seen:
+                    key_clean += char
+                    seen.add(char)
+                    if len(key_clean) >= 25:
+                        break
+        
+        # Create 5x5 square
+        square = []
+        for i in range(5):
+            row = []
+            for j in range(5):
+                row.append(key_clean[i * 5 + j])
+            square.append(row)
+        
+        return square
+    
+    # Standard square creation
     # Remove duplicates while preserving order, convert to uppercase
     key_clean = ""
     seen = set()
-    for char in key.upper():
+    for char in key.lower():
         if char.isalpha() and char not in seen:
             key_clean += char
             seen.add(char)
     
-    # Add remaining letters (I and J are combined)
-    alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"  # No J, I and J are combined
+    # Add remaining letters (j and i are combined)
+    alphabet = "abcdefghiklmnopqrstuvwxyz"  # No j, j and i are combined (25 letters)
     for char in alphabet:
         if char not in seen:
             key_clean += char
@@ -55,14 +119,14 @@ def _prepare_text(text: str) -> str:
         Prepared text (uppercase, letters only, X padding for odd length)
     """
     # Remove non-alphabetic characters and convert to uppercase
-    text_clean = re.sub(r'[^A-Za-z]', '', text.upper())
+    text_clean = re.sub(r'[^a-zçğıöşü]', '', text.lower())
     
-    # Replace J with I
-    text_clean = text_clean.replace('J', 'I')
+    # Replace j with i
+    text_clean = text_clean.replace('j', 'i')
     
-    # Add X padding for odd length
+    # Add x padding for odd length
     if len(text_clean) % 2 == 1:
-        text_clean += 'X'
+        text_clean += 'x'
     
     return text_clean
 
@@ -153,7 +217,15 @@ def _decrypt_digram(square1: list[list[str]], square2: list[list[str]],
     return result_char1 + result_char2
 
 
-def encrypt(plaintext: str, key1: str, key2: str, key3: str, key4: str) -> str:
+def encrypt(
+    plaintext: str, 
+    key1: str, 
+    key2: str, 
+    key3: str, 
+    key4: str,
+    square_type: str = "standard",
+    mono_params: Optional[Dict[str, Any]] = None
+) -> str:
     """
     Encrypt plaintext using Four Square cipher.
     
@@ -180,10 +252,10 @@ def encrypt(plaintext: str, key1: str, key2: str, key3: str, key4: str) -> str:
         raise ValueError("Key4 must contain at least one letter")
     
     # Create key squares
-    square1 = _create_key_square(key1)
-    square2 = _create_key_square(key2)
-    square3 = _create_key_square(key3)
-    square4 = _create_key_square(key4)
+    square1 = _create_key_square(key1, square_type, mono_params)
+    square2 = _create_key_square(key2, square_type, mono_params)
+    square3 = _create_key_square(key3, square_type, mono_params)
+    square4 = _create_key_square(key4, square_type, mono_params)
     
     # Prepare text
     text = _prepare_text(plaintext)
@@ -197,7 +269,15 @@ def encrypt(plaintext: str, key1: str, key2: str, key3: str, key4: str) -> str:
     return result
 
 
-def decrypt(ciphertext: str, key1: str, key2: str, key3: str, key4: str) -> str:
+def decrypt(
+    ciphertext: str, 
+    key1: str, 
+    key2: str, 
+    key3: str, 
+    key4: str,
+    square_type: str = "standard",
+    mono_params: Optional[Dict[str, Any]] = None
+) -> str:
     """
     Decrypt ciphertext using Four Square cipher.
     
@@ -224,10 +304,10 @@ def decrypt(ciphertext: str, key1: str, key2: str, key3: str, key4: str) -> str:
         raise ValueError("Key4 must contain at least one letter")
     
     # Create key squares
-    square1 = _create_key_square(key1)
-    square2 = _create_key_square(key2)
-    square3 = _create_key_square(key3)
-    square4 = _create_key_square(key4)
+    square1 = _create_key_square(key1, square_type, mono_params)
+    square2 = _create_key_square(key2, square_type, mono_params)
+    square3 = _create_key_square(key3, square_type, mono_params)
+    square4 = _create_key_square(key4, square_type, mono_params)
     
     # Prepare text
     text = _prepare_text(ciphertext)

@@ -109,7 +109,7 @@ static void clean_text(const char* input, char* output, size_t output_size) {
     size_t i = 0, j = 0;
     while (input[i] && j < output_size - 1) {
         if (isalpha(input[i]) || isdigit(input[i])) {
-            output[j++] = toupper(input[i]);
+            output[j++] = tolower(input[i]);
         }
         i++;
     }
@@ -160,7 +160,7 @@ static int create_keyword_polybius_square(const char* keyword, const char* alpha
     int seen[256] = {0};
     
     for (size_t i = 0; keyword[i] && unique_pos < 36; i++) {
-        char c = toupper(keyword[i]);
+        char c = tolower(keyword[i]);
         if (strchr(alphabet, c) && !seen[(unsigned char)c]) {
             keyword_unique[unique_pos++] = c;
             seen[(unsigned char)c] = 1;
@@ -207,7 +207,7 @@ static int create_straddling_checkerboard(const char* keyword, const char* alpha
     int seen[256] = {0};
     
     for (size_t i = 0; keyword[i] && unique_pos < 30; i++) {
-        char c = toupper(keyword[i]);
+        char c = tolower(keyword[i]);
         if (strchr(alphabet, c) && !seen[(unsigned char)c]) {
             keyword_unique[unique_pos++] = c;
             seen[(unsigned char)c] = 1;

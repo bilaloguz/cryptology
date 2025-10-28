@@ -126,7 +126,7 @@ static int prepare_text(const char *input, char *output, size_t output_size, int
     size_t output_pos = 0;
     
     for (size_t i = 0; i < input_len && output_pos < output_size - 1; i++) {
-        char c = toupper((unsigned char)input[i]);
+        char c = tolower((unsigned char)input[i]);
         if (c >= 'A' && c <= 'Z') {
             output[output_pos++] = c;
         }

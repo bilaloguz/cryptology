@@ -15,8 +15,10 @@ Where:
 
 import math
 
+from cryptology import alphabets as ALPHABETS
+
 # Default English alphabet (lowercase only)
-DEFAULT_ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET
 
 
 def _gcd(a: int, b: int) -> int:

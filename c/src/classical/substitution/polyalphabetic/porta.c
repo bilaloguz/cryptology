@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define DEFAULT_ALPHABET "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define DEFAULT_ALPHABET "abcdefghijklmnopqrstuvwxyz"
 #define TURKISH_ALPHABET "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
 #define MAX_PAIRS 20
 #define MAX_BUFFER_SIZE 1000
@@ -32,7 +32,7 @@ static int validate_alphabetic_key(const char* key) {
 
 // Helper function to find character position in alphabet
 static int find_char_position(const char* alphabet, char c) {
-    char upper_c = toupper(c);
+    char upper_c = tolower(c);
     const char* pos = strchr(alphabet, upper_c);
     if (pos) {
         return pos - alphabet;
@@ -42,10 +42,10 @@ static int find_char_position(const char* alphabet, char c) {
 
 // Helper function to find which pair contains a letter
 static int find_letter_pair(char letter, const porta_pair_t* pairs, size_t pairs_count) {
-    char upper_letter = toupper(letter);
+    char upper_letter = tolower(letter);
     
     for (size_t i = 0; i < pairs_count; i++) {
-        if (toupper(pairs[i].first) == upper_letter || toupper(pairs[i].second) == upper_letter) {
+        if (tolower(pairs[i].first) == upper_letter || tolower(pairs[i].second) == upper_letter) {
             return i;
         }
     }
@@ -219,26 +219,26 @@ int porta_encrypt(const char *plaintext,
     size_t result_pos = 0;
     
     for (const char* p = plaintext; *p && result_pos < result_size - 1; p++) {
-        if (strchr(use_alphabet, toupper(*p))) {
+        if (strchr(use_alphabet, tolower(*p))) {
             // Find which pair contains this letter
             int pair_index = find_letter_pair(*p, use_pairs, use_pairs_count);
             
             if (pair_index >= 0) {
                 // Determine which letter in the pair to use based on key
-                char key_letter = toupper(key[key_index % strlen(key)]);
+                char key_letter = tolower(key[key_index % strlen(key)]);
                 int key_pos = find_char_position(use_alphabet, key_letter);
                 
                 if (key_pos >= 0) {
                     // Use the pair based on key letter position
                     char encrypted_char;
                     if (key_pos % 2 == 0) {  // Even position (A, C, E, etc.)
-                        if (toupper(*p) == toupper(use_pairs[pair_index].first)) {
+                        if (tolower(*p) == tolower(use_pairs[pair_index].first)) {
                             encrypted_char = use_pairs[pair_index].second;
                         } else {
                             encrypted_char = use_pairs[pair_index].first;
                         }
                     } else {  // Odd position (B, D, F, etc.)
-                        if (toupper(*p) == toupper(use_pairs[pair_index].first)) {
+                        if (tolower(*p) == tolower(use_pairs[pair_index].first)) {
                             encrypted_char = use_pairs[pair_index].first;
                         } else {
                             encrypted_char = use_pairs[pair_index].second;

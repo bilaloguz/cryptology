@@ -14,13 +14,14 @@ where each row is a different Caesar cipher. This implementation supports:
 
 import secrets
 from typing import List, Optional, Tuple
+import cryptology.alphabets as ALPHABETS
 from ..monoalphabetic.caesar import produce_alphabet as caesar_produce
 from ..monoalphabetic.keyword import produce_alphabet as keyword_produce
 from ..monoalphabetic.affine import produce_alphabet as affine_produce
 from ..monoalphabetic.atbash import produce_alphabet as atbash_produce
 
-DEFAULT_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-TURKISH_ALPHABET = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET
+TURKISH_ALPHABET = ALPHABETS.TURKISH_STANDARD
 
 
 def generate_random_key(length: int, alphabet: str = DEFAULT_ALPHABET) -> str:
@@ -63,7 +64,7 @@ def generate_key_for_text(plaintext: str, alphabet: str = DEFAULT_ALPHABET) -> s
         return ""
     
     # Count only alphabetic characters (spaces are preserved in encryption)
-    alphabetic_chars = sum(1 for c in plaintext.upper() if c.isalpha())
+    alphabetic_chars = sum(1 for c in plaintext.lower() if c.isalpha())
     return generate_random_key(alphabetic_chars, alphabet)
 
 
@@ -296,9 +297,12 @@ def _find_char_position(alphabet: str, char: str) -> int:
     Raises:
         ValueError: If character not found
     """
-    char_upper = char.upper()
-    for i, c in enumerate(alphabet):
-        if c.upper() == char_upper:
+    # For Turkish characters and case-insensitive matching
+    char_lower = char.lower()
+    alphabet_lower = alphabet.lower()
+    
+    for i, c in enumerate(alphabet_lower):
+        if c == char_lower:
             return i
     raise ValueError(f"Character '{char}' not found in alphabet")
 
@@ -315,7 +319,7 @@ def _prepare_ciphertext(text: str, alphabet: str) -> str:
         Cleaned text ready for decryption
     """
     text_clean = ""
-    for char in text.upper():
+    for char in text.lower():
         if char.isalpha():
             text_clean += char
         elif char == ' ':
@@ -337,30 +341,8 @@ def _prepare_text(text: str, alphabet: str) -> str:
         Cleaned text ready for encryption
     """
     text_clean = ""
-    for char in text.upper():
+    for char in text.lower():
         if char.isalpha():
-            # Handle custom alphabets
-            if alphabet != DEFAULT_ALPHABET:
-                # Apply language-specific replacements
-                if 'ç' in alphabet.lower() or 'Ç' in alphabet:
-                    # Turkish character replacements
-                    if char == 'Ç':
-                        char = 'C'
-                    elif char == 'Ğ':
-                        char = 'G'
-                    elif char == 'I':
-                        char = 'I'
-                    elif char == 'Ö':
-                        char = 'O'
-                    elif char == 'Ş':
-                        char = 'S'
-                    elif char == 'Ü':
-                        char = 'U'
-            else:
-                # Standard English: Replace J with I
-                if char == 'J':
-                    char = 'I'
-            
             text_clean += char
         elif char == ' ':
             # Preserve spaces
@@ -371,8 +353,8 @@ def _prepare_text(text: str, alphabet: str) -> str:
 
 def encrypt(plaintext: str, 
            key: str,
-           table: Optional[List[List[str]]] = None,
-           alphabet: str = DEFAULT_ALPHABET) -> str:
+           alphabet: str = DEFAULT_ALPHABET,
+           table: Optional[List[List[str]]] = None) -> str:
     """
     Encrypt plaintext using Vigenère cipher.
     
@@ -390,7 +372,12 @@ def encrypt(plaintext: str,
     
     # Generate table if not provided
     if table is None:
-        table = produce_table("classical", alphabet)
+        # Always use _create_classical_table to ensure correct structure
+        table = _create_classical_table(alphabet)
+    
+    # Verify table structure at start
+    if not isinstance(table[0], list):
+        table = _create_classical_table(alphabet)
     
     # Prepare text and key
     plaintext_clean = _prepare_text(plaintext, alphabet)
@@ -411,7 +398,14 @@ def encrypt(plaintext: str,
             try:
                 # Find character positions
                 plain_pos = _find_char_position(alphabet, char)
-                key_pos = _find_char_position(alphabet, key_clean[key_index % len(key_clean)])
+                key_index_mod = key_index % len(key_clean)
+                key_char = key_clean[key_index_mod]
+                key_pos = _find_char_position(alphabet, key_char)
+                
+                # Verify table structure
+                if not isinstance(table[key_pos], list):
+                    # Table was corrupted somehow - rebuild
+                    table = _create_classical_table(alphabet)
                 
                 # Get cipher character from table
                 cipher_char = table[key_pos][plain_pos]
@@ -420,7 +414,7 @@ def encrypt(plaintext: str,
                 # Move to next key character
                 key_index += 1
                 
-            except ValueError:
+            except ValueError as e:
                 # Skip characters not in alphabet
                 continue
     
@@ -429,8 +423,8 @@ def encrypt(plaintext: str,
 
 def decrypt(ciphertext: str,
            key: str,
-           table: Optional[List[List[str]]] = None,
-           alphabet: str = DEFAULT_ALPHABET) -> str:
+           alphabet: str = DEFAULT_ALPHABET,
+           table: Optional[List[List[str]]] = None) -> str:
     """
     Decrypt ciphertext using Vigenère cipher.
     
@@ -448,7 +442,12 @@ def decrypt(ciphertext: str,
     
     # Generate table if not provided
     if table is None:
-        table = produce_table("classical", alphabet)
+        # Always use _create_classical_table to ensure correct structure
+        table = _create_classical_table(alphabet)
+    
+    # Verify table structure at start
+    if table and not isinstance(table[0], list):
+        table = _create_classical_table(alphabet)
     
     # Prepare text and key
     ciphertext_clean = _prepare_ciphertext(ciphertext, alphabet)
@@ -461,7 +460,7 @@ def decrypt(ciphertext: str,
     result = ""
     key_index = 0
     
-    for char in ciphertext_clean:
+    for i, char in enumerate(ciphertext_clean):
         if char == ' ':
             # Preserve spaces
             result += char
@@ -471,7 +470,18 @@ def decrypt(ciphertext: str,
                 key_pos = _find_char_position(alphabet, key_clean[key_index % len(key_clean)])
                 
                 # Find cipher character in table row
-                cipher_pos = _find_char_position(table[key_pos], char)
+                if not isinstance(table[key_pos], list):
+                    # Table was corrupted - rebuild
+                    table = _create_classical_table(alphabet)
+                
+                cipher_pos = None
+                for j, c in enumerate(table[key_pos]):
+                    if c == char:
+                        cipher_pos = j
+                        break
+                
+                if cipher_pos is None:
+                    raise ValueError(f"Character '{char}' not found in table row")
                 
                 # Get plain character from alphabet
                 plain_char = alphabet[cipher_pos]

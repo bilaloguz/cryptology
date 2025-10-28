@@ -21,8 +21,10 @@ from ..monoalphabetic.keyword import produce_alphabet as keyword_produce
 from ..monoalphabetic.affine import produce_alphabet as affine_produce
 from ..monoalphabetic.atbash import produce_alphabet as atbash_produce
 
-DEFAULT_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-TURKISH_ALPHABET = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
+import cryptology.alphabets as ALPHABETS
+
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET
+TURKISH_ALPHABET = ALPHABETS.TURKISH_STANDARD
 
 
 def generate_random_key(length: int, alphabet: str = DEFAULT_ALPHABET) -> str:
@@ -65,7 +67,7 @@ def generate_key_for_text(plaintext: str, alphabet: str = DEFAULT_ALPHABET) -> s
         return ""
     
     # Count only alphabetic characters (spaces are preserved in encryption)
-    alphabetic_chars = sum(1 for c in plaintext.upper() if c.isalpha())
+    alphabetic_chars = sum(1 for c in plaintext.lower() if c.isalpha())
     return generate_random_key(alphabetic_chars, alphabet)
 
 
@@ -284,7 +286,7 @@ def _prepare_text(text: str, alphabet: str) -> str:
         Cleaned text ready for encryption
     """
     text_clean = ""
-    for char in text.upper():
+    for char in text.lower():
         if char.isalpha():
             # Handle custom alphabets
             if alphabet == DEFAULT_ALPHABET:
@@ -320,7 +322,7 @@ def _prepare_ciphertext(ciphertext: str) -> str:
         Cleaned ciphertext ready for decryption
     """
     text_clean = ""
-    for char in ciphertext.upper():
+    for char in ciphertext.lower():
         if char.isalpha() or char == ' ':
             text_clean += char
     return text_clean
@@ -340,7 +342,7 @@ def _extend_key(key: str, plaintext: str, alphabet: str) -> str:
     """
     # Prepare plaintext (remove spaces and non-alphabetic characters)
     prepared_plaintext = ""
-    for char in plaintext.upper():
+    for char in plaintext.lower():
         if char.isalpha() and char in alphabet:
             prepared_plaintext += char
     
@@ -363,7 +365,7 @@ def _extend_key_for_decryption(key: str, decrypted_so_far: str, alphabet: str) -
     """
     # Prepare decrypted text (remove spaces and non-alphabetic characters)
     prepared_decrypted = ""
-    for char in decrypted_so_far.upper():
+    for char in decrypted_so_far.lower():
         if char.isalpha() and char in alphabet:
             prepared_decrypted += char
     
@@ -372,7 +374,7 @@ def _extend_key_for_decryption(key: str, decrypted_so_far: str, alphabet: str) -
     return extended_key
 
 
-def encrypt(plaintext: str, key: str, table: Optional[List[List[str]]] = None, alphabet: str = DEFAULT_ALPHABET) -> str:
+def encrypt(plaintext: str, key: str, alphabet: str = DEFAULT_ALPHABET, table: Optional[List[List[str]]] = None) -> str:
     """
     Encrypt plaintext using Auto-key cipher.
     
@@ -414,6 +416,10 @@ def encrypt(plaintext: str, key: str, table: Optional[List[List[str]]] = None, a
             key_char = extended_key[key_index % len(extended_key)]
             key_pos = alphabet.index(key_char)
             
+            # Verify table structure
+            if not isinstance(table[key_pos], list):
+                table = _create_classical_table(alphabet)
+            
             # Auto-key encryption: use table for encryption
             encrypted_char = table[key_pos][char_pos]
             result += encrypted_char
@@ -423,7 +429,7 @@ def encrypt(plaintext: str, key: str, table: Optional[List[List[str]]] = None, a
     return result
 
 
-def decrypt(ciphertext: str, key: str, table: Optional[List[List[str]]] = None, alphabet: str = DEFAULT_ALPHABET) -> str:
+def decrypt(ciphertext: str, key: str, alphabet: str = DEFAULT_ALPHABET, table: Optional[List[List[str]]] = None) -> str:
     """
     Decrypt ciphertext using Auto-key cipher.
     

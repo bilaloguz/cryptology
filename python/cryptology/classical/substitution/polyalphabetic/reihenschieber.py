@@ -48,9 +48,9 @@ def reihenschieber_encrypt(
         alphabet = string.ascii_uppercase
     
     # Prepare text and key
-    text = plaintext.upper()
-    key_upper = key.upper()
-    alphabet_upper = alphabet.upper()
+    text = plaintext.lower()
+    key_upper = key.lower()
+    alphabet_upper = alphabet.lower()
     
     # Validate inputs
     if not all(c in alphabet_upper for c in text):
@@ -139,9 +139,9 @@ def reihenschieber_decrypt(
         alphabet = string.ascii_uppercase
     
     # Prepare text and key
-    text = ciphertext.upper()
-    key_upper = key.upper()
-    alphabet_upper = alphabet.upper()
+    text = ciphertext.lower()
+    key_upper = key.lower()
+    alphabet_upper = alphabet.lower()
     
     # Validate inputs
     if not all(c in alphabet_upper for c in text):

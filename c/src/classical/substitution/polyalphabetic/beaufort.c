@@ -19,7 +19,7 @@
 #include <time.h>
 #include <stdarg.h>
 
-#define DEFAULT_ALPHABET "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define DEFAULT_ALPHABET "abcdefghijklmnopqrstuvwxyz"
 #define TURKISH_ALPHABET "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
 
 int beaufort_generate_random_key(int length, const char *alphabet, 
@@ -350,7 +350,7 @@ int beaufort_prepare_text(const char *text, const char *alphabet,
     size_t result_index = 0;
     
     for (size_t i = 0; text[i] != '\0' && result_index < result_size - 1; i++) {
-        char char_upper = toupper(text[i]);
+        char char_upper = tolower(text[i]);
         
         if (isalpha(char_upper)) {
             // Handle custom alphabets
@@ -392,7 +392,7 @@ int beaufort_prepare_ciphertext(const char *ciphertext,
     size_t result_index = 0;
     
     for (size_t i = 0; ciphertext[i] != '\0' && result_index < result_size - 1; i++) {
-        char char_upper = toupper(ciphertext[i]);
+        char char_upper = tolower(ciphertext[i]);
         
         if (isalpha(char_upper) || char_upper == ' ') {
             result[result_index++] = char_upper;

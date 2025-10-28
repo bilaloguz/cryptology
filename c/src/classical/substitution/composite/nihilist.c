@@ -20,7 +20,7 @@
 #define MAX_TEXT_SIZE 1000
 
 // Default English alphabet
-static const char DEFAULT_ALPHABET[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+static const char DEFAULT_ALPHABET[] = "abcdefghijklmnopqrstuvwxyz";
 
 /**
  * @brief Prepare text for processing (remove non-alphabetic characters, convert to uppercase)
@@ -253,7 +253,7 @@ static int create_standard_square(const char* alphabet, char* result, size_t res
     }
     
     // Handle I=J combination for English
-    if (strcmp(alphabet_upper, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
+    if (strcmp(alphabet_upper, "abcdefghijklmnopqrstuvwxyz") == 0) {
         // Remove J, use I for both I and J
         char temp[MAX_ALPHABET_SIZE];
         int pos = 0;
@@ -268,7 +268,7 @@ static int create_standard_square(const char* alphabet, char* result, size_t res
     
     // Determine square size
     int size;
-    if (strcmp(alphabet_upper, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
+    if (strcmp(alphabet_upper, "abcdefghijklmnopqrstuvwxyz") == 0) {
         size = 5;  // English uses 5x5 (25 letters with I=J)
     } else if (strcmp(alphabet_upper, "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ") == 0) {
         size = 6;  // Turkish uses 6x6 (29 letters)
@@ -320,7 +320,7 @@ static int create_frequency_square(const char* alphabet, char* result, size_t re
     char frequency_order[MAX_ALPHABET_SIZE];
     
     // Define frequency orders
-    if (strcmp(alphabet_upper, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
+    if (strcmp(alphabet_upper, "abcdefghijklmnopqrstuvwxyz") == 0) {
         // English frequency order (25 letters for 5x5 square)
         strcpy(frequency_order, "ETAOINSHRDLCUMWFGYPBVKXQZ");
     } else if (strcmp(alphabet_upper, "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ") == 0) {
@@ -332,7 +332,7 @@ static int create_frequency_square(const char* alphabet, char* result, size_t re
     }
     
     // Handle I=J combination for English
-    if (strcmp(alphabet_upper, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
+    if (strcmp(alphabet_upper, "abcdefghijklmnopqrstuvwxyz") == 0) {
         char temp[MAX_ALPHABET_SIZE];
         int pos = 0;
         for (int i = 0; frequency_order[i]; i++) {
@@ -346,7 +346,7 @@ static int create_frequency_square(const char* alphabet, char* result, size_t re
     
     // Determine square size
     int size;
-    if (strcmp(alphabet_upper, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
+    if (strcmp(alphabet_upper, "abcdefghijklmnopqrstuvwxyz") == 0) {
         size = 5;  // English uses 5x5 (25 letters with I=J)
     } else if (strcmp(alphabet_upper, "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ") == 0) {
         size = 6;  // Turkish uses 6x6 (29 letters)
@@ -434,7 +434,7 @@ static int create_keyword_square(const char* keyword, const char* alphabet, char
     strcat(square_alphabet, remaining);
     
     // Handle I=J combination for English
-    if (strcmp(alphabet_upper, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
+    if (strcmp(alphabet_upper, "abcdefghijklmnopqrstuvwxyz") == 0) {
         char temp[MAX_ALPHABET_SIZE];
         int pos = 0;
         for (int i = 0; square_alphabet[i]; i++) {
@@ -448,7 +448,7 @@ static int create_keyword_square(const char* keyword, const char* alphabet, char
     
     // Determine square size
     int size;
-    if (strcmp(alphabet_upper, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
+    if (strcmp(alphabet_upper, "abcdefghijklmnopqrstuvwxyz") == 0) {
         size = 5;  // English uses 5x5 (25 letters with I=J)
     } else if (strcmp(alphabet_upper, "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ") == 0) {
         size = 6;  // Turkish uses 6x6 (29 letters)

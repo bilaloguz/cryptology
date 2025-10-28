@@ -6,8 +6,10 @@ to create the cipher alphabet. The keyword (with duplicates removed) is written 
 followed by the remaining letters of the alphabet in order.
 """
 
+from cryptology import alphabets as ALPHABETS
+
 # Default English alphabet (lowercase only)
-DEFAULT_ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+DEFAULT_ALPHABET = ALPHABETS.ENGLISH_ALPHABET
 
 
 def _create_cipher_alphabet(keyword: str, alphabet: str) -> str:

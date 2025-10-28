@@ -15,14 +15,14 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#define DEFAULT_ALPHABET "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define DEFAULT_ALPHABET "abcdefghijklmnopqrstuvwxyz"
 #define TURKISH_ALPHABET "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
 
 // Helper function to prepare text for encryption
 static void prepare_text(const char* text, char* result, const char* alphabet) {
     int pos = 0;
     for (const char* p = text; *p && pos < 1000; p++) {
-        char c = toupper(*p);
+        char c = tolower(*p);
         if (isalpha(c)) {
             // Handle custom alphabets
             if (strcmp(alphabet, DEFAULT_ALPHABET) != 0) {
@@ -49,7 +49,7 @@ static void prepare_text(const char* text, char* result, const char* alphabet) {
 static void prepare_ciphertext(const char* ciphertext, char* result) {
     int pos = 0;
     for (const char* p = ciphertext; *p && pos < 1000; p++) {
-        char c = toupper(*p);
+        char c = tolower(*p);
         if (isalpha(c) || c == ' ') {
             result[pos++] = c;
         }

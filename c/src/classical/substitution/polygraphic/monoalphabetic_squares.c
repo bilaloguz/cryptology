@@ -26,7 +26,7 @@ static int gcd(int x, int y) {
 // Helper function to convert string to uppercase
 static void to_upper_string(char *str) {
     for (int i = 0; str[i]; i++) {
-        str[i] = toupper(str[i]);
+        str[i] = tolower(str[i]);
     }
 }
 
@@ -36,7 +36,7 @@ static void remove_duplicates(const char *keyword, char *result) {
     int result_idx = 0;
     
     for (int i = 0; keyword[i]; i++) {
-        char c = toupper(keyword[i]);
+        char c = tolower(keyword[i]);
         if (isalpha(c) && !seen[c]) {
             result[result_idx++] = c;
             seen[c] = 1;
@@ -171,7 +171,7 @@ int alphabet_to_square(const char *transformed_alphabet, const char *original_al
     to_upper_string(original_copy);
     
     // Handle I=J combination for English
-    if (strcmp(original_copy, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
+    if (strcmp(original_copy, "abcdefghijklmnopqrstuvwxyz") == 0) {
         for (int i = 0; alphabet_copy[i]; i++) {
             if (alphabet_copy[i] == 'J') {
                 alphabet_copy[i] = 'I';
@@ -181,7 +181,7 @@ int alphabet_to_square(const char *transformed_alphabet, const char *original_al
     
     // Determine square size based on original alphabet
     int size;
-    if (strcmp(original_copy, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
+    if (strcmp(original_copy, "abcdefghijklmnopqrstuvwxyz") == 0) {
         size = 5; // English uses 5x5 (25 letters with I=J)
     } else if (strcmp(original_copy, "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ") == 0) {
         size = 6; // Turkish uses 6x6 (29 letters)
@@ -222,7 +222,7 @@ int create_monoalphabetic_square(
         return -1;
     }
     
-    const char *default_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const char *default_alphabet = "abcdefghijklmnopqrstuvwxyz";
     const char *use_alphabet = alphabet ? alphabet : default_alphabet;
     
     char transformed_alphabet[MAX_ALPHABET_SIZE];
