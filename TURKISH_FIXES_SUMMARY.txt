@@ -1,0 +1,32 @@
+TURKISH ALPHABET FIXES - SUMMARY
+=================================
+
+COMPLETED FIXES:
+✅ Vigenère - Fixed parameter order (alphabet before table)
+✅ Beaufort - Fixed parameter order (alphabet before table)  
+✅ Auto-key - Fixed parameter order (alphabet before table)
+✅ ROT13 - Fixed to use shift=13 (not half alphabet length)
+✅ Playfair - Made square size dynamic (5x5 or 6x6)
+
+REMAINING ISSUES:
+❌ Playfair (Turkish) - Still failing in full test suite
+❌ Bifid (Turkish) - Not yet fixed
+❌ Trifid (ALL) - Known algorithmic issue (deferred)
+❌ Columnar (Turkish Extended) - UTF-8 issue
+
+CURRENT STATUS: 34/42 (81% passing)
+
+WORKS IN ALL ALPHABETS:
+- Caesar, Atbash, Keyword, Affine
+- ROT13 (now fixed)
+- Vigenère, Beaufort, Auto-key (now fixed)
+- Scytale, Rail Fence, Columnar (Turkish Standard)
+
+WORKS IN ENGLISH ONLY:
+- Playfair, Bifid
+
+NOTES:
+- Don't replace Turkish characters in any cipher
+- Use dynamic square sizes (5x5 or 6x6) based on alphabet
+- For odd-length padding, use characters that exist in the square
+
